@@ -37,7 +37,7 @@ public class FlashLight : MonoBehaviour
 
     private void Update()
     {
-        //Debug.DrawRay(this.transform.position, this.transform.up * flashLight.pointLightOuterRadius, Color.red);
+        Debug.DrawRay(this.transform.position, this.transform.up * flashLight.pointLightOuterRadius, Color.red);
         SpotLight();
         ChangeFlashLight();
         RaycastCheck();
@@ -106,9 +106,10 @@ public class FlashLight : MonoBehaviour
         //TODO:根据人物的朝向修改方向
 
         RaycastHit2D hit = Physics2D.Raycast(this.transform.position, this.transform.up, 
-            flashLight.pointLightOuterRadius, layermask);
+            flashLight.pointLightOuterRadius);
 
-        if (hit.collider != null && hit.collider.CompareTag("organs"))
+        //检测机关
+        if (hit.collider != null && hit.collider.CompareTag("Organ"))
         {
             timer += Time.deltaTime;
             if(timer >= triggerTime)
@@ -117,5 +118,26 @@ public class FlashLight : MonoBehaviour
                 Debug.Log("organs");
             }
         }
+
+        //检测目标物体是否在聚光灯内
+        if(hit.collider != null && hit.collider.CompareTag("ShadowTarget"))
+        {
+            Debug.Log("检测到了Target");
+
+            //邻边向量
+            Vector3 tmp_Dir_1 = new Vector3(hit.collider.gameObject.transform.GetChild(0).position.x, this.transform.position.y) 
+                - this.transform.position;
+            //斜边向量
+            Vector3 tmp_Dir_2 = hit.collider.gameObject.transform.GetChild(0).position - this.transform.position;
+
+            Debug.Log("计算了向量");
+
+            if (Mathf.Cos(flashLight.pointLightOuterAngle / 2 * Mathf.Deg2Rad) <= tmp_Dir_1.magnitude / tmp_Dir_2.magnitude)
+            {
+                //显示阴影
+                Debug.Log("显示阴影");
+            }
+        }
+
     }
 }
