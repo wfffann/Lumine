@@ -38,7 +38,7 @@ public class FlashLight : MonoBehaviour
 
     private void Update()
     {
-        Debug.DrawRay(this.transform.position, this.transform.up * flashLight.pointLightOuterRadius, Color.red);
+        //Debug.DrawRay(this.transform.position, this.transform.up * flashLight.pointLightOuterRadius, Color.red);
         SpotLight();
         ChangeFlashLight();
         RaycastCheck();
@@ -120,24 +120,20 @@ public class FlashLight : MonoBehaviour
             }
         }
 
-        //检测目标物体是否在聚光灯内
+        //检测目标物体是否在聚光灯内(生成阴影Shadow
         if(hit.collider != null && hit.collider.CompareTag("ShadowTarget"))
         {
-            //Debug.Log("检测到了Target");
-
             //邻边向量
             Vector3 tmp_Dir_1 = new Vector3(hit.collider.gameObject.transform.GetChild(0).position.x, this.transform.position.y) 
                 - this.transform.position;
             //斜边向量
             Vector3 tmp_Dir_2 = hit.collider.gameObject.transform.GetChild(0).position - this.transform.position;
 
-            //Debug.Log("计算了向量");
-
             if (Mathf.Cos(flashLight.pointLightOuterAngle / 2 * Mathf.Deg2Rad) <= tmp_Dir_1.magnitude / tmp_Dir_2.magnitude)
             {
                 //显示阴影
-                Debug.Log("显示阴影");
-                if(hit.collider.gameObject.GetComponent<Shadow>() != null)
+                if(hit.collider.gameObject.transform.childCount == 3 && 
+                    hit.collider.gameObject.transform.GetChild(2).GetComponent<Shadow>() != null)
                 {
 
                     hit.collider.transform.GetChild(2).gameObject.SetActive(true);
@@ -151,8 +147,9 @@ public class FlashLight : MonoBehaviour
             //不在生成影子范围内
             else
             {
-                Debug.Log("隐藏阴影");
-                if(hit.collider.gameObject.GetComponent<Shadow>() != null)
+                //Debug.Log("隐藏阴影");
+                if(hit.collider.gameObject.transform.childCount == 3 && 
+                    hit.collider.gameObject.transform.GetChild(2).GetComponent<Shadow>() != null)
                 {
                     hit.collider.transform.GetChild(2).gameObject.SetActive(false);
                 }
@@ -174,23 +171,18 @@ public class FlashLight : MonoBehaviour
                 float tmp_Distance = Vector2.Distance(this.transform.position, 
                     _shadowTargetGameObject.transform.GetChild(1).transform.position);
 
-                //float tmp = (this.transform.position - _shadowTargetGameObject.transform.GetChild(1).transform.position).magnitude;
-
-                //Debug.Log("tmp_Distance:" + tmp_Distance);
-                //Debug.Log("tmp:" + tmp);
-
-                //Shadow初始位置
-                Vector2 tmp_ShadowBornPosition = new Vector2(tmp_Distance, -this.transform.position.y);
+                //Shadow初始位置(TODO:这个位置还需要修改
+                Vector2 tmp_ShadowBornPosition = new Vector2(Mathf.Abs(tmp_Distance), -this.transform.position.y);
 
                 //实例化生成Shadow
-                GameObject tmp_Obj = GameObject.Instantiate(shadowTargetData.shadowTargetsList[i].shadowTargetPrefab,
+                GameObject tmp_Shadow = GameObject.Instantiate(shadowTargetData.shadowTargetsList[i].shadowTargetPrefab,
                     _shadowTargetGameObject.transform);
 
-                tmp_Obj.transform.localPosition = tmp_ShadowBornPosition;
+                tmp_Shadow.transform.localPosition = tmp_ShadowBornPosition;
 
                 //添加Shadow脚本
                 //Shadow tmp_shadow = tmp_Obj.AddComponent<Shadow>(); 
-                _shadowTargetGameObject.AddComponent<Shadow>();
+                tmp_Shadow.AddComponent<Shadow>();
             }
         }
     }
