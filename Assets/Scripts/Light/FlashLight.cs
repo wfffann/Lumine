@@ -6,13 +6,13 @@ using UnityEngine.Rendering.Universal;
 
 public class FlashLight : MonoBehaviour
 {
-    //组件
+    [Header("组件获取")]
     private Light2D flashLight;//SpotLight
 
-    //bool
+    [Header("状态检测")]
     public bool isSpotLight;//是否聚光
 
-    //数据
+    [Header("基本设置")]
     private float originalPointLightOuterAngle;
     private float currentPointLightOuterAngle;
 
@@ -43,7 +43,9 @@ public class FlashLight : MonoBehaviour
         RaycastCheck();
     }
 
-    //是否为聚光状态
+    /// <summary>
+    /// 是否为聚光状态
+    /// </summary>
     public void SpotLight()
     {
         if (Input.GetKeyDown(KeyCode.U))
@@ -53,7 +55,9 @@ public class FlashLight : MonoBehaviour
         }
     }
 
-    //改变手电筒的焦距
+    /// <summary>
+    /// 改变手电筒的焦距
+    /// </summary>
     public void ChangeFlashLight()
     {
         if (!isSpotLight) return;//不是聚光状态
@@ -92,7 +96,9 @@ public class FlashLight : MonoBehaviour
         flashLight.pointLightOuterRadius = Mathf.Clamp(raduisOuter, 6f, 10f);
     }
 
-    //射线检测
+    /// <summary>
+    /// 射线检测
+    /// </summary>
     public void RaycastCheck()
     {
         if (!isSpotLight) return;
