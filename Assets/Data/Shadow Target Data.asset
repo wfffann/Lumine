@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d2cbded583b11c498781fcb1cc120e5, type: 3}
+  m_Name: Shadow Target Data
+  m_EditorClassIdentifier: 
+  shadowTargetsList:
+  - shadowTargetName: Square
+    shadowTargetPrefab: {fileID: 8497235291993090858, guid: 494554ce120805242956bd3863dbaa00, type: 3}

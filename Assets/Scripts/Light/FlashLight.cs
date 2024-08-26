@@ -8,6 +8,7 @@ public class FlashLight : MonoBehaviour
 {
     [Header("组件获取")]
     private Light2D flashLight;//SpotLight
+    public ShadowTargetData shadowTargetData;
 
     [Header("状态检测")]
     public bool isSpotLight;//是否聚光
@@ -19,7 +20,7 @@ public class FlashLight : MonoBehaviour
     public float raduisInner;
     public float raduisOuter;
 
-    public LayerMask layermask;
+    //public LayerMask layermask;
 
     private float timer;
     public float triggerTime;
@@ -122,7 +123,7 @@ public class FlashLight : MonoBehaviour
         //检测目标物体是否在聚光灯内
         if(hit.collider != null && hit.collider.CompareTag("ShadowTarget"))
         {
-            Debug.Log("检测到了Target");
+            //Debug.Log("检测到了Target");
 
             //邻边向量
             Vector3 tmp_Dir_1 = new Vector3(hit.collider.gameObject.transform.GetChild(0).position.x, this.transform.position.y) 
@@ -130,14 +131,67 @@ public class FlashLight : MonoBehaviour
             //斜边向量
             Vector3 tmp_Dir_2 = hit.collider.gameObject.transform.GetChild(0).position - this.transform.position;
 
-            Debug.Log("计算了向量");
+            //Debug.Log("计算了向量");
 
             if (Mathf.Cos(flashLight.pointLightOuterAngle / 2 * Mathf.Deg2Rad) <= tmp_Dir_1.magnitude / tmp_Dir_2.magnitude)
             {
                 //显示阴影
                 Debug.Log("显示阴影");
+                if(hit.collider.gameObject.GetComponent<Shadow>() != null)
+                {
+
+                    hit.collider.transform.GetChild(2).gameObject.SetActive(true);
+                }
+                else
+                {
+                    //创建
+                    CreateShadow(hit.collider.gameObject);
+                }
+            }
+            //不在生成影子范围内
+            else
+            {
+                Debug.Log("隐藏阴影");
+                if(hit.collider.gameObject.GetComponent<Shadow>() != null)
+                {
+                    hit.collider.transform.GetChild(2).gameObject.SetActive(false);
+                }
             }
         }
+    }
 
+    /// <summary>
+    /// 生成当前物体的影子
+    /// </summary>
+    public void CreateShadow(GameObject _shadowTargetGameObject)
+    {
+        for(int i = 0; i < shadowTargetData.shadowTargetsList.Count; i++)
+        {   
+            //匹配名称
+            if(_shadowTargetGameObject.name == shadowTargetData.shadowTargetsList[i].shadowTargetName)
+            {
+                //计算光源与ShadowTarget的距离
+                float tmp_Distance = Vector2.Distance(this.transform.position, 
+                    _shadowTargetGameObject.transform.GetChild(1).transform.position);
+
+                //float tmp = (this.transform.position - _shadowTargetGameObject.transform.GetChild(1).transform.position).magnitude;
+
+                //Debug.Log("tmp_Distance:" + tmp_Distance);
+                //Debug.Log("tmp:" + tmp);
+
+                //Shadow初始位置
+                Vector2 tmp_ShadowBornPosition = new Vector2(tmp_Distance, -this.transform.position.y);
+
+                //实例化生成Shadow
+                GameObject tmp_Obj = GameObject.Instantiate(shadowTargetData.shadowTargetsList[i].shadowTargetPrefab,
+                    _shadowTargetGameObject.transform);
+
+                tmp_Obj.transform.localPosition = tmp_ShadowBornPosition;
+
+                //添加Shadow脚本
+                //Shadow tmp_shadow = tmp_Obj.AddComponent<Shadow>(); 
+                _shadowTargetGameObject.AddComponent<Shadow>();
+            }
+        }
     }
 }
