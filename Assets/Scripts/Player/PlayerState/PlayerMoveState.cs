@@ -24,8 +24,6 @@ public class PlayerMoveState : PlayerGroundState
 
         player.SetVelocity(xInput * player.speed, rb.velocity.y);
 
-        
-
         //当没有输入或者贴着墙时切换状态为静止状态
         if (xInput == 0 || player.isWall)
             stateMachine.ChangeState(player.idleState);

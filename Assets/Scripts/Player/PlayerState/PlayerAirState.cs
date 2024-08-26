@@ -24,9 +24,7 @@ public class PlayerAirState : PlayerState
 
         //落到地面切换为静止状态
         if (player.isGround)
-        {
             stateMachine.ChangeState(player.idleState);
-        }
 
         //空中的移动速度
         if (xInput != 0)

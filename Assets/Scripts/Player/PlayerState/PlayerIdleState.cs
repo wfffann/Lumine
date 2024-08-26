@@ -11,6 +11,7 @@ public class PlayerIdleState : PlayerGroundState
     public override void Enter()
     {
         base.Enter();
+
         player.isJump = false;
         player.SetZeroVelocity();
     }

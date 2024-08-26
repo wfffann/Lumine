@@ -30,5 +30,8 @@ public class PlayerJumpState : PlayerState
 
         if (rb.velocity.y < 0)
             stateMachine.ChangeState(player.airState);
+
+        if (player.isJump && player.canGrab && player.isWall && !player.isGround)
+            stateMachine.ChangeState(player.grabState);
     }
 }

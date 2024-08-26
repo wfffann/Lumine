@@ -19,8 +19,10 @@ public class Player : MonoBehaviour
     [Header("地面和墙面检测")]
     public Transform groundCheck;
     public Transform wallCheck;
+    public Transform grabCheck;
     public float wallCheckRadius;
     public float groundCheckRadius;//检测半径
+    public float grabCheckRadius;
     public LayerMask groundLayer; //地面的图层
 
     [Header("状态检测")]
@@ -28,6 +30,8 @@ public class Player : MonoBehaviour
     public bool isGround;
     public bool isWall;
     public bool isJump;
+    public bool canGrab;
+    public bool isGrab = false;
     public bool isBusy = false;
     //朝向
     public int facingDir= 1;
@@ -37,7 +41,6 @@ public class Player : MonoBehaviour
     public bool isKnocked = false; //被敌人打中
 
     #region 所有状态
-
     public PlayerStateMachine stateMachine { get; private set; }
     //地面状态
     public PlayerGroundState groundState { get; private set; }
@@ -47,6 +50,8 @@ public class Player : MonoBehaviour
     public PlayerJumpState jumpState { get; private set; }
     public PlayerAirState airState { get; private set; }
     //墙上的状态
+    public PlayerGrabState grabState { get; private set; }
+    public PlayerClimbState climbState { get; private set; }
     #endregion
 
     private void Awake()
@@ -57,6 +62,8 @@ public class Player : MonoBehaviour
         moveState = new PlayerMoveState(this, stateMachine, "Move");
         jumpState = new PlayerJumpState(this, stateMachine, "Jump");
         airState = new PlayerAirState(this, stateMachine, "Jump");
+        grabState = new PlayerGrabState(this, stateMachine, "Grab");
+        climbState = new PlayerClimbState(this, stateMachine, "Climb");
     }
 
     private void Start()
@@ -71,8 +78,6 @@ public class Player : MonoBehaviour
     private void Update()
     {
         stateMachine.currentState.Update();
-
-        Debug.Log(isWall);
     }
 
     private void FixedUpdate()
@@ -88,6 +93,7 @@ public class Player : MonoBehaviour
         ////画圆来检测是否接触到了地面
         isGround = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
         isWall = Physics2D.OverlapCircle(wallCheck.position, wallCheckRadius, groundLayer);
+        canGrab = !Physics2D.OverlapCircle(grabCheck.position, grabCheckRadius, groundLayer);
         if (isGround)
         {
             rb.gravityScale = 4;
@@ -112,7 +118,7 @@ public class Player : MonoBehaviour
     /// <summary>
     /// 使玩家的速度为0
     /// </summary>
-    public virtual void SetZeroVelocity()
+    public void SetZeroVelocity()
     {
         if (isKnocked)
             return;
@@ -125,11 +131,8 @@ public class Player : MonoBehaviour
     /// </summary>
     /// <param name="_xVelocity"></param>
     /// <param name="_yVelocity"></param>
-    public virtual void SetVelocity(float _xVelocity, float _yVelocity)
+    public void SetVelocity(float _xVelocity, float _yVelocity)
     {
-        if (isKnocked)
-            return;
-
         rb.velocity = new Vector2(_xVelocity, _yVelocity);
         FlipController(_xVelocity);
     }
@@ -152,7 +155,9 @@ public class Player : MonoBehaviour
     }
     #endregion
 
-    public void AnimationTrigger() => stateMachine.currentState.AnimationFinishTrigger();
+    #region 动画
+    public void AnimationTrigger() => stateMachine.currentState.AnimationFinishTrigger(); //判断动画是否播放完毕
+    #endregion
 
     /// <summary>
     /// 绘制地面和墙面检测点
