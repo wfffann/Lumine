@@ -32,7 +32,16 @@ public class Shadow : MonoBehaviour
     public void ChangeShadowPosition()
     {
         float tmp_Distance = (this.transform.parent.transform.GetChild(1).transform.position - playerTransform.position).magnitude;
-        this.transform.localPosition = new Vector2(Mathf.Abs(tmp_Distance), -playerTransform.position.y);
+
+        if(playerTransform.position.x <= this.transform.position.x)
+        {
+            this.transform.localPosition = new Vector2(Mathf.Abs(tmp_Distance), -playerTransform.position.y);
+        }
+        else
+        {
+            this.transform.localPosition = new Vector2(-Mathf.Abs(tmp_Distance), -playerTransform.position.y);
+        }
+        
 
         ChangeShadowScale(tmp_Distance);
     }
