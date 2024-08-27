@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -25,6 +26,8 @@ public class FlashLight : MonoBehaviour
     private float timer;
     public float triggerTime;
 
+    private List<GameObject> currentSceneShadowList = new List<GameObject>();//当前场景的阴影集合
+
     private void Awake()
     {
         flashLight = GetComponent<Light2D>();
@@ -39,6 +42,32 @@ public class FlashLight : MonoBehaviour
     private void Update()
     {
         //Debug.DrawRay(this.transform.position, this.transform.up * flashLight.pointLightOuterRadius, Color.red);
+
+        //Quaternion quaternion_Top1 = Quaternion.AngleAxis(flashLight.pointLightOuterAngle / 4, new Vector3(0, 0, 1));
+        //Vector2 tmp_Dir_Top_1 = quaternion_Top1 * this.transform.up * flashLight.pointLightOuterRadius;//旋转后的射线
+        //Debug.DrawRay(this.transform.position, tmp_Dir_Top_1, Color.green);
+        
+        //Quaternion quaternion_Top2 = Quaternion.AngleAxis(flashLight.pointLightOuterAngle / 8, new Vector3(0, 0, 1));
+        //Vector2 tmp_Dir_Top_2 = quaternion_Top2 * this.transform.up * flashLight.pointLightOuterRadius;//旋转后的射线
+        //Debug.DrawRay(this.transform.position, tmp_Dir_Top_2, Color.green);
+        
+        //Quaternion quaternion_Top3 = Quaternion.AngleAxis(flashLight.pointLightOuterAngle / 8 * 3 , new Vector3(0, 0, 1));
+        //Vector2 tmp_Dir_Top_3 = quaternion_Top3 * this.transform.up * flashLight.pointLightOuterRadius;//旋转后的射线
+        //Debug.DrawRay(this.transform.position, tmp_Dir_Top_3, Color.green);
+
+
+        Quaternion quaternion_Bottom_1 = Quaternion.AngleAxis(-flashLight.pointLightOuterAngle / 4, new Vector3(0, 0, 1));
+        Vector2 tmp_Dir_Bottom_1 = quaternion_Bottom_1 * this.transform.up * flashLight.pointLightOuterRadius;//旋转后的射线
+        Debug.DrawRay(this.transform.position, tmp_Dir_Bottom_1, Color.red);
+        
+        Quaternion quaternion_Bottom_2 = Quaternion.AngleAxis(-flashLight.pointLightOuterAngle / 8, new Vector3(0, 0, 1));
+        Vector2 tmp_Dir_Bottom_2 = quaternion_Bottom_2 * this.transform.up * flashLight.pointLightOuterRadius;//旋转后的射线
+        Debug.DrawRay(this.transform.position, tmp_Dir_Bottom_2, Color.red);
+        
+        //Quaternion quaternion_Bottom_3 = Quaternion.AngleAxis(-flashLight.pointLightOuterAngle / 8 * 3, new Vector3(0, 0, 1));
+        //Vector2 tmp_Dir_Bottom_3 = quaternion_Bottom_3 * this.transform.up * flashLight.pointLightOuterRadius;//旋转后的射线
+        //Debug.DrawRay(this.transform.position, tmp_Dir_Bottom_3, Color.red);
+
         SpotLight();
         ChangeFlashLight();
         RaycastCheck();
@@ -106,11 +135,41 @@ public class FlashLight : MonoBehaviour
 
         //TODO:根据人物的朝向修改方向
 
-        RaycastHit2D hit = Physics2D.Raycast(this.transform.position, this.transform.up, 
+        RaycastHit2D hit_Center = Physics2D.Raycast(this.transform.position, this.transform.up, 
             flashLight.pointLightOuterRadius);
 
+        //Quaternion quaternion_Top_1 = Quaternion.AngleAxis(flashLight.pointLightOuterAngle / 4, new Vector3(0, 0, 1));
+        //Vector2 tmp_Dir_Top_1 = quaternion_Top_1 * this.transform.up * flashLight.pointLightOuterRadius;//旋转后的射线
+        //RaycastHit2D hit_Top_1 = Physics2D.Raycast(this.transform.position, tmp_Dir_Top_1.normalized, 
+        //    flashLight.pointLightOuterRadius);
+        
+        //Quaternion quaternion_Top_2 = Quaternion.AngleAxis(flashLight.pointLightOuterAngle / 8, new Vector3(0, 0, 1));
+        //Vector2 tmp_Dir_Top_2 = quaternion_Top_2 * this.transform.up * flashLight.pointLightOuterRadius;//旋转后的射线
+        //RaycastHit2D hit_Top_2 = Physics2D.Raycast(this.transform.position, tmp_Dir_Top_2.normalized, 
+        //    flashLight.pointLightOuterRadius);
+        
+        //Quaternion quaternion_Top_3 = Quaternion.AngleAxis(flashLight.pointLightOuterAngle / 8 * 3, new Vector3(0, 0, 1));
+        //Vector2 tmp_Dir_Top_3 = quaternion_Top_3 * this.transform.up * flashLight.pointLightOuterRadius;//旋转后的射线
+        //RaycastHit2D hit_Top_3 = Physics2D.Raycast(this.transform.position, tmp_Dir_Top_3.normalized, 
+        //    flashLight.pointLightOuterRadius);
+        
+        Quaternion quaternion_Bottom_1 = Quaternion.AngleAxis(-flashLight.pointLightOuterAngle / 4, new Vector3(0, 0, 1));
+        Vector2 tmp_Dir_Bottom_1 = quaternion_Bottom_1 * this.transform.up * flashLight.pointLightOuterRadius;//旋转后的射线
+        RaycastHit2D hit_Bottom_1 = Physics2D.Raycast(this.transform.position, tmp_Dir_Bottom_1.normalized, 
+            flashLight.pointLightOuterRadius);
+        
+        Quaternion quaternion_Bottom_2 = Quaternion.AngleAxis(-flashLight.pointLightOuterAngle / 8, new Vector3(0, 0, 1));
+        Vector2 tmp_Dir_Bottom_2 = quaternion_Bottom_2 * this.transform.up * flashLight.pointLightOuterRadius;//旋转后的射线
+        RaycastHit2D hit_Bottom_2 = Physics2D.Raycast(this.transform.position, tmp_Dir_Bottom_2.normalized, 
+            flashLight.pointLightOuterRadius);
+        
+        //Quaternion quaternion_Bottom_3 = Quaternion.AngleAxis(-flashLight.pointLightOuterAngle / 8 * 3, new Vector3(0, 0, 1));
+        //Vector2 tmp_Dir_Bottom_3 = quaternion_Bottom_3 * this.transform.up * flashLight.pointLightOuterRadius;//旋转后的射线
+        //RaycastHit2D hit_Bottom_3 = Physics2D.Raycast(this.transform.position, tmp_Dir_Bottom_3.normalized, 
+        //    flashLight.pointLightOuterRadius);
+
         //检测机关
-        if (hit.collider != null && hit.collider.CompareTag("Organ"))
+        if (hit_Center.collider != null  && hit_Center.collider.CompareTag("Organ"))
         {
             timer += Time.deltaTime;
             if(timer >= triggerTime)
@@ -121,42 +180,130 @@ public class FlashLight : MonoBehaviour
         }
 
         //检测目标物体是否在聚光灯内(生成阴影Shadow
-        if(hit.collider != null && hit.collider.CompareTag("ShadowTarget"))
+        //if(hit_Center.collider != null && hit_Center.collider.CompareTag("ShadowTarget"))
+
+        //if (hit_Center.collider != null && hit_Center.collider.CompareTag("ShadowTarget") ||
+        //   hit_Bottom_1.collider != null && hit_Bottom_1.collider.CompareTag("ShadowTarget") ||
+        //   hit_Bottom_2.collider != null && hit_Bottom_2.collider.CompareTag("ShadowTarget") ||
+        //   hit_Bottom_3.collider != null && hit_Bottom_3.collider.CompareTag("ShadowTarget"))
+        //{
+        //    //邻边距离
+        //    //float tmp_Distance = (new Vector3(hit.collider.gameObject.transform.GetChild(0).position.x, this.transform.position.y)
+        //    //    - this.transform.position).magnitude;
+
+        //    //Debug.Log("tmp_Distance: " + tmp_Distance);
+
+        //    //邻边向量
+        //    Vector3 tmp_Dir_1 = new Vector3(hit_Center.collider.gameObject.transform.GetChild(0).position.x, this.transform.position.y) 
+        //        - this.transform.position;
+        //    //斜边向量
+        //    Vector3 tmp_Dir_2 = hit_Center.collider.gameObject.transform.GetChild(0).position - this.transform.position;
+
+        //    if (Mathf.Cos(flashLight.pointLightOuterAngle / 2 * Mathf.Deg2Rad) <= tmp_Dir_1.magnitude / tmp_Dir_2.magnitude)
+        //    {
+        //        //显示阴影
+        //        if(hit_Center.collider.gameObject.transform.childCount == 3 && 
+        //            hit_Center.collider.gameObject.transform.GetChild(2).GetComponent<Shadow>() != null)
+        //        {
+
+        //            hit_Center.collider.transform.GetChild(2).gameObject.SetActive(true);
+        //        }
+        //        else
+        //        {
+        //            //创建
+        //            CreateShadow(hit_Center.collider.gameObject);
+        //        }
+        //    }
+        //    //不在生成影子范围内
+        //    else
+        //    {
+        //        //Debug.Log("隐藏阴影");
+        //        if(hit_Center.collider.gameObject.transform.childCount == 3 && 
+        //            hit_Center.collider.gameObject.transform.GetChild(2).GetComponent<Shadow>() != null)
+        //        {
+        //            Debug.Log("隐藏阴影");
+
+        //            hit_Center.collider.transform.GetChild(2).gameObject.SetActive(false);
+        //        }
+        //    }
+        //}
+        //else
+        //{
+        //    for(int i = 0; i < currentSceneShadowList.Count; i++)
+        //    {
+        //        currentSceneShadowList[i].gameObject.SetActive(false);
+        //    }
+        //}
+        //}
+
+        if (hit_Center.collider != null && hit_Center.collider.CompareTag("ShadowTarget"))
         {
-            //邻边向量
-            Vector3 tmp_Dir_1 = new Vector3(hit.collider.gameObject.transform.GetChild(0).position.x, this.transform.position.y) 
-                - this.transform.position;
-            //斜边向量
-            Vector3 tmp_Dir_2 = hit.collider.gameObject.transform.GetChild(0).position - this.transform.position;
-
-            if (Mathf.Cos(flashLight.pointLightOuterAngle / 2 * Mathf.Deg2Rad) <= tmp_Dir_1.magnitude / tmp_Dir_2.magnitude)
+            AboutShadow(hit_Center);
+        }
+        else if (hit_Bottom_1.collider != null && hit_Bottom_1.collider.CompareTag("ShadowTarget"))
+        {
+            AboutShadow(hit_Bottom_1);
+        }
+        else if (hit_Bottom_2.collider != null && hit_Bottom_2.collider.CompareTag("ShadowTarget"))
+        {
+            AboutShadow(hit_Bottom_2);
+        }
+        //else if (hit_Bottom_3.collider != null && hit_Bottom_3.collider.CompareTag("ShadowTarget"))
+        //{
+        //    AboutShadow(hit_Bottom_3);
+        //}
+        else
+        {
+            for (int i = 0; i < currentSceneShadowList.Count; i++)
             {
-                //显示阴影
-                if(hit.collider.gameObject.transform.childCount == 3 && 
-                    hit.collider.gameObject.transform.GetChild(2).GetComponent<Shadow>() != null)
-                {
-
-                    hit.collider.transform.GetChild(2).gameObject.SetActive(true);
-                }
-                else
-                {
-                    //创建
-                    CreateShadow(hit.collider.gameObject);
-                }
-            }
-            //不在生成影子范围内
-            else
-            {
-                //Debug.Log("隐藏阴影");
-                if(hit.collider.gameObject.transform.childCount == 3 && 
-                    hit.collider.gameObject.transform.GetChild(2).GetComponent<Shadow>() != null)
-                {
-                    hit.collider.transform.GetChild(2).gameObject.SetActive(false);
-                }
+                currentSceneShadowList[i].gameObject.SetActive(false);
             }
         }
     }
 
+    public void AboutShadow(RaycastHit2D hit)
+    {
+        //邻边距离
+        //float tmp_Distance = (new Vector3(hit.collider.gameObject.transform.GetChild(0).position.x, this.transform.position.y)
+        //    - this.transform.position).magnitude;
+
+        //Debug.Log("tmp_Distance: " + tmp_Distance);
+
+        //邻边向量
+        Vector3 tmp_Dir_1 = new Vector3(hit.collider.gameObject.transform.GetChild(0).position.x, this.transform.position.y)
+            - this.transform.position;
+        //斜边向量
+        Vector3 tmp_Dir_2 = hit.collider.gameObject.transform.GetChild(0).position - this.transform.position;
+
+        if (Mathf.Cos(flashLight.pointLightOuterAngle / 2 * Mathf.Deg2Rad) <= tmp_Dir_1.magnitude / tmp_Dir_2.magnitude)
+        {
+            //显示阴影
+            if (hit.collider.gameObject.transform.childCount == 3 &&
+                hit.collider.gameObject.transform.GetChild(2).GetComponent<Shadow>() != null)
+            {
+
+                hit.collider.transform.GetChild(2).gameObject.SetActive(true);
+            }
+            else
+            {
+                //创建
+                CreateShadow(hit.collider.gameObject);
+            }
+        }
+        //不在生成影子范围内
+        else
+        {
+            //Debug.Log("隐藏阴影");
+            if (hit.collider.gameObject.transform.childCount == 3 &&
+                hit.collider.gameObject.transform.GetChild(2).GetComponent<Shadow>() != null)
+            {
+                Debug.Log("隐藏阴影");
+
+                hit.collider.transform.GetChild(2).gameObject.SetActive(false);
+            }
+        }
+    }
+    
     /// <summary>
     /// 生成当前物体的影子
     /// </summary>
@@ -177,6 +324,9 @@ public class FlashLight : MonoBehaviour
                 //实例化生成Shadow
                 GameObject tmp_Shadow = GameObject.Instantiate(shadowTargetData.shadowTargetsList[i].shadowTargetPrefab,
                     _shadowTargetGameObject.transform);
+
+                //添加进阴影的集合
+                currentSceneShadowList.Add(tmp_Shadow);
 
                 tmp_Shadow.transform.localPosition = tmp_ShadowBornPosition;
 
