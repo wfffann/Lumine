@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Rendering.UI;
 using UnityEngine.Rendering.Universal;
 
 public class FlashLight : MonoBehaviour
@@ -13,14 +12,11 @@ public class FlashLight : MonoBehaviour
     public ShadowTargetData shadowTargetData;
 
     [Header("状态检测")]
-    public LightState currrentLightState; //是否聚光
+    public bool isSpotLight;//是否聚光
 
     [Header("基本设置")]
-    private float originalPointLightOuterAngle; //原始外圈角度
-    private float currentPointLightOuterAngle; //当前外圈角度
-    private float originalPointLightInnerAngle; //原始内圈角度
-    private float currentPointLightInnerAngle; //当前内圈角度
-
+    private float originalPointLightOuterAngle;
+    private float currentPointLightOuterAngle;
 
     public float raduisInner;
     public float raduisOuter;
@@ -73,33 +69,24 @@ public class FlashLight : MonoBehaviour
         //Vector2 tmp_Dir_Bottom_3 = quaternion_Bottom_3 * this.transform.up * flashLight.pointLightOuterRadius;//旋转后的射线
         //Debug.DrawRay(this.transform.position, tmp_Dir_Bottom_3, Color.red);
 
-        CheckLightState();
+        SpotLight();
         ChangeFlashLight();
         RaycastCheck();
     }
 
     /// <summary>
-    /// 检查具体的灯光状态
+    /// 是否为聚光状态
     /// </summary>
-    public void CheckLightState()
+    public void SpotLight()
     {
-        //开关聚光状态
         if (Input.GetKeyDown(KeyCode.U))
         {
-            if (currrentLightState == LightState.LightDown)
-                currrentLightState = LightState.SpotLight;
-            else if (currrentLightState == LightState.SpotLight)
-                currrentLightState = LightState.LightDown;
+            isSpotLight = !isSpotLight;
+            flashLight.enabled = isSpotLight;
 
-            if (currrentLightState == LightState.LightDown)
+            if (!isSpotLight)
             {
-                //关闭所有影子
                 CloseAllShadow();
-                flashLight.enabled = false;
-            }
-            else
-            {
-                flashLight.enabled = true;
             }
         }
     }
@@ -109,7 +96,7 @@ public class FlashLight : MonoBehaviour
     /// </summary>
     public void ChangeFlashLight()
     {
-        if (currrentLightState != LightState.SpotLight) return;//不是聚光状态
+        if (!isSpotLight) return;//不是聚光状态
 
         flashLight.pointLightInnerAngle = 0;
 
@@ -150,7 +137,7 @@ public class FlashLight : MonoBehaviour
     /// </summary>
     public void RaycastCheck()
     {
-        if (currrentLightState != LightState.SpotLight) return;
+        if (!isSpotLight) return;
 
         //TODO:根据人物的朝向修改方向
 
@@ -188,7 +175,7 @@ public class FlashLight : MonoBehaviour
         //    flashLight.pointLightOuterRadius);
 
         //检测机关
-        if (hit_Center.collider != null  && hit_Center.collider.CompareTag("Organ") && currrentLightState == LightState.SpotLight)
+        if (hit_Center.collider != null  && hit_Center.collider.CompareTag("Organ") && isSpotLight)
         {
             timer += Time.deltaTime;
             if(timer >= triggerTime)
@@ -255,15 +242,15 @@ public class FlashLight : MonoBehaviour
         //}
         //}
 
-        if (hit_Center.collider != null && hit_Center.collider.CompareTag("ShadowTarget") && currrentLightState == LightState.SpotLight)
+        if (hit_Center.collider != null && hit_Center.collider.CompareTag("ShadowTarget") && isSpotLight)
         {
             AboutShadow(hit_Center);
         }
-        else if (hit_Bottom_1.collider != null && hit_Bottom_1.collider.CompareTag("ShadowTarget") && currrentLightState == LightState.SpotLight)
+        else if (hit_Bottom_1.collider != null && hit_Bottom_1.collider.CompareTag("ShadowTarget") && isSpotLight)
         {
             AboutShadow(hit_Bottom_1);
         }
-        else if (hit_Bottom_2.collider != null && hit_Bottom_2.collider.CompareTag("ShadowTarget") && currrentLightState == LightState.SpotLight)
+        else if (hit_Bottom_2.collider != null && hit_Bottom_2.collider.CompareTag("ShadowTarget") && isSpotLight)
         {
             AboutShadow(hit_Bottom_2);
         }
