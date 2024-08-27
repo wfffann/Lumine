@@ -14,14 +14,16 @@ public class Shadow : MonoBehaviour
 
     private void Update()
     {
-        //寻找Player
-        if(this.gameObject.activeInHierarchy == true)
-        {
-            playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+        ////寻找Player
+        //if(this.gameObject.activeInHierarchy == true)
+        //{
 
-            //改变阴影的位置
-            ChangeShadowPosition();
-        }
+        //}
+
+        playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+
+        //改变阴影的位置
+        ChangeShadowPosition();
     }
 
     /// <summary>
@@ -31,13 +33,18 @@ public class Shadow : MonoBehaviour
     {
         float tmp_Distance = (this.transform.parent.transform.GetChild(1).transform.position - playerTransform.position).magnitude;
         this.transform.localPosition = new Vector2(Mathf.Abs(tmp_Distance), -playerTransform.position.y);
+
+        ChangeShadowScale(tmp_Distance);
     }
 
     /// <summary>
     /// 改变Shadow阴影的大小
     /// </summary>
-    public void ChangeShadowScale()
+    public void ChangeShadowScale(float _distance)
     {
+        float tmp_ScaleX = Mathf.Lerp(1.4f, 4.2f, (10f - _distance) / 10);
+        float tmp_ScaleY = Mathf.Lerp(1.4f, 4.2f, (10f - _distance) / 10);
 
+        this.transform.localScale = new Vector2(tmp_ScaleY, tmp_ScaleX);
     }
 }

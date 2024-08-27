@@ -28,6 +28,7 @@ public class FlashLight : MonoBehaviour
 
     private List<GameObject> currentSceneShadowList = new List<GameObject>();//当前场景的阴影集合
 
+
     private void Awake()
     {
         flashLight = GetComponent<Light2D>();
@@ -82,6 +83,11 @@ public class FlashLight : MonoBehaviour
         {
             isSpotLight = !isSpotLight;
             flashLight.enabled = isSpotLight;
+
+            if (!isSpotLight)
+            {
+                CloseAllShadow();
+            }
         }
     }
 
@@ -169,7 +175,7 @@ public class FlashLight : MonoBehaviour
         //    flashLight.pointLightOuterRadius);
 
         //检测机关
-        if (hit_Center.collider != null  && hit_Center.collider.CompareTag("Organ"))
+        if (hit_Center.collider != null  && hit_Center.collider.CompareTag("Organ") && isSpotLight)
         {
             timer += Time.deltaTime;
             if(timer >= triggerTime)
@@ -236,15 +242,15 @@ public class FlashLight : MonoBehaviour
         //}
         //}
 
-        if (hit_Center.collider != null && hit_Center.collider.CompareTag("ShadowTarget"))
+        if (hit_Center.collider != null && hit_Center.collider.CompareTag("ShadowTarget") && isSpotLight)
         {
             AboutShadow(hit_Center);
         }
-        else if (hit_Bottom_1.collider != null && hit_Bottom_1.collider.CompareTag("ShadowTarget"))
+        else if (hit_Bottom_1.collider != null && hit_Bottom_1.collider.CompareTag("ShadowTarget") && isSpotLight)
         {
             AboutShadow(hit_Bottom_1);
         }
-        else if (hit_Bottom_2.collider != null && hit_Bottom_2.collider.CompareTag("ShadowTarget"))
+        else if (hit_Bottom_2.collider != null && hit_Bottom_2.collider.CompareTag("ShadowTarget") && isSpotLight)
         {
             AboutShadow(hit_Bottom_2);
         }
@@ -254,10 +260,8 @@ public class FlashLight : MonoBehaviour
         //}
         else
         {
-            for (int i = 0; i < currentSceneShadowList.Count; i++)
-            {
-                currentSceneShadowList[i].gameObject.SetActive(false);
-            }
+            //关闭所有阴影
+            CloseAllShadow();
         }
     }
 
@@ -334,6 +338,17 @@ public class FlashLight : MonoBehaviour
                 //Shadow tmp_shadow = tmp_Obj.AddComponent<Shadow>(); 
                 tmp_Shadow.AddComponent<Shadow>();
             }
+        }
+    }
+
+    /// <summary>
+    /// 关闭所有的阴影
+    /// </summary>
+    public void CloseAllShadow()
+    {
+        for (int i = 0; i < currentSceneShadowList.Count; i++)
+        {
+            currentSceneShadowList[i].gameObject.SetActive(false);
         }
     }
 }
