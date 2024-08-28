@@ -7,6 +7,8 @@ public class Platform : MonoBehaviour
     public LightState currentPlatformState;
     private SpriteRenderer sr;
     private BoxCollider2D coll;
+
+    public LayerMask lightLayer;
     public float checkRadius;
 
     private void Awake()
@@ -25,7 +27,7 @@ public class Platform : MonoBehaviour
         else if (currentPlatformState == LightState.LightDown)
         {
             sr.enabled = true;
-            coll.enabled = true;    
+            coll.enabled = true;
         }
     }
 
@@ -36,23 +38,25 @@ public class Platform : MonoBehaviour
 
     private void CheckCollision()
     {
-        RaycastHit2D[] hits = Physics2D.CircleCastAll(transform.position, checkRadius, new Vector2(1f, 0));
+        RaycastHit2D[] hits = Physics2D.CircleCastAll(transform.position, checkRadius, new Vector2(1f, 0), lightLayer);
+
+        //检测光显暗显平台的显示，如果都没有检测到则正常显示
+        if(hits == null)
+        {
+            if (currentPlatformState == LightState.LightUp)
+            {
+                sr.enabled = false;
+                coll.enabled = false;
+            }
+            else
+            {
+                sr.enabled = true;
+                coll.enabled = true;
+            }
+            return;
+        }
         foreach (var hit in hits)
         {
-            if (hit.collider == null)
-            {
-                if (currentPlatformState == LightState.LightUp)
-                {
-                    sr.enabled = false;
-                    coll.enabled = false;
-                }
-                else
-                {
-                    sr.enabled = true;
-                    coll.enabled = true;
-                }
-                return;
-            }
             if (hit.collider.tag == "Player Light")
             {
                 var currentState = hit.collider.GetComponent<FlashLight>().currrentLightState;
@@ -66,7 +70,19 @@ public class Platform : MonoBehaviour
                     sr.enabled = false;
                     coll.enabled = false;
                 }
+                return;
             }
+        }
+        //碰撞体中没有灯光则按正常显示
+        if (currentPlatformState == LightState.LightUp)
+        {
+            sr.enabled = false;
+            coll.enabled = false;
+        }
+        else
+        {
+            sr.enabled = true;
+            coll.enabled = true;
         }
     }
 
