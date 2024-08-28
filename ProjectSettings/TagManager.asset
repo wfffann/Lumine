@@ -7,6 +7,7 @@ TagManager:
   - Undefined
   - Organ
   - ShadowTarget
+  - Player Light
   layers:
   - Default
   - TransparentFX
@@ -18,7 +19,7 @@ TagManager:
   - Background
   - Enviroment item
   - NPC
-  - 
+  - Player
   - 
   - 
   - 

@@ -10,10 +10,11 @@ public class FlashLight : MonoBehaviour
 {
     [Header("组件获取")]
     private Light2D flashLight;//SpotLight
+    private CircleCollider2D coll;
     public ShadowTargetData shadowTargetData;
 
     [Header("状态检测")]
-    public LightState currrentLightState; //是否聚光
+    public LightState currrentLightState = LightState.LightDown; //是否聚光
 
     [Header("基本设置")]
     private float originalPointLightOuterAngle; //原始外圈角度
@@ -25,7 +26,7 @@ public class FlashLight : MonoBehaviour
     public float raduisInner;
     public float raduisOuter;
 
-    //public LayerMask layermask;
+    public LayerMask shadow;
 
     private float timer;
     public float triggerTime;
@@ -36,12 +37,18 @@ public class FlashLight : MonoBehaviour
     private void Awake()
     {
         flashLight = GetComponent<Light2D>();
+        coll = GetComponent<CircleCollider2D>();
 
         originalPointLightOuterAngle = flashLight.pointLightOuterAngle;
         currentPointLightOuterAngle = originalPointLightOuterAngle;
 
         raduisInner = flashLight.pointLightInnerRadius;
         raduisOuter = flashLight.pointLightOuterRadius;
+
+        //关闭所有影子
+        CloseAllShadow();
+        flashLight.enabled = false;
+        coll.enabled = false;
     }
 
     private void Update()
@@ -51,11 +58,11 @@ public class FlashLight : MonoBehaviour
         //Quaternion quaternion_Top1 = Quaternion.AngleAxis(flashLight.pointLightOuterAngle / 4, new Vector3(0, 0, 1));
         //Vector2 tmp_Dir_Top_1 = quaternion_Top1 * this.transform.up * flashLight.pointLightOuterRadius;//旋转后的射线
         //Debug.DrawRay(this.transform.position, tmp_Dir_Top_1, Color.green);
-        
+
         //Quaternion quaternion_Top2 = Quaternion.AngleAxis(flashLight.pointLightOuterAngle / 8, new Vector3(0, 0, 1));
         //Vector2 tmp_Dir_Top_2 = quaternion_Top2 * this.transform.up * flashLight.pointLightOuterRadius;//旋转后的射线
         //Debug.DrawRay(this.transform.position, tmp_Dir_Top_2, Color.green);
-        
+
         //Quaternion quaternion_Top3 = Quaternion.AngleAxis(flashLight.pointLightOuterAngle / 8 * 3 , new Vector3(0, 0, 1));
         //Vector2 tmp_Dir_Top_3 = quaternion_Top3 * this.transform.up * flashLight.pointLightOuterRadius;//旋转后的射线
         //Debug.DrawRay(this.transform.position, tmp_Dir_Top_3, Color.green);
@@ -64,11 +71,11 @@ public class FlashLight : MonoBehaviour
         Quaternion quaternion_Bottom_1 = Quaternion.AngleAxis(-flashLight.pointLightOuterAngle / 4, new Vector3(0, 0, 1));
         Vector2 tmp_Dir_Bottom_1 = quaternion_Bottom_1 * this.transform.up * flashLight.pointLightOuterRadius;//旋转后的射线
         Debug.DrawRay(this.transform.position, tmp_Dir_Bottom_1, Color.red);
-        
+
         Quaternion quaternion_Bottom_2 = Quaternion.AngleAxis(-flashLight.pointLightOuterAngle / 8, new Vector3(0, 0, 1));
         Vector2 tmp_Dir_Bottom_2 = quaternion_Bottom_2 * this.transform.up * flashLight.pointLightOuterRadius;//旋转后的射线
         Debug.DrawRay(this.transform.position, tmp_Dir_Bottom_2, Color.red);
-        
+
         //Quaternion quaternion_Bottom_3 = Quaternion.AngleAxis(-flashLight.pointLightOuterAngle / 8 * 3, new Vector3(0, 0, 1));
         //Vector2 tmp_Dir_Bottom_3 = quaternion_Bottom_3 * this.transform.up * flashLight.pointLightOuterRadius;//旋转后的射线
         //Debug.DrawRay(this.transform.position, tmp_Dir_Bottom_3, Color.red);
@@ -76,6 +83,7 @@ public class FlashLight : MonoBehaviour
         CheckLightState();
         ChangeFlashLight();
         RaycastCheck();
+        ChangeLightUp(); 
     }
 
     /// <summary>
@@ -96,14 +104,37 @@ public class FlashLight : MonoBehaviour
                 //关闭所有影子
                 CloseAllShadow();
                 flashLight.enabled = false;
+                coll.enabled = true;
             }
             else
             {
                 flashLight.enabled = true;
+                coll.enabled = false;
+            }
+        }
+        else if (Input.GetKeyDown(KeyCode.V))
+        {
+            if (currrentLightState == LightState.LightDown)
+                currrentLightState = LightState.LightUp;
+            else if (currrentLightState == LightState.LightUp)
+                currrentLightState = LightState.LightDown;
+
+            if (currrentLightState == LightState.LightDown)
+            {
+                //关闭所有影子
+                CloseAllShadow();
+                flashLight.enabled = false;
+                coll.enabled = true;
+            }
+            else
+            {
+                flashLight.enabled = true;
+                coll.enabled = true;
             }
         }
     }
 
+    #region 灯光聚焦状态
     /// <summary>
     /// 改变手电筒的焦距
     /// </summary>
@@ -116,7 +147,7 @@ public class FlashLight : MonoBehaviour
         if (Input.GetKey(KeyCode.Y))
         {
             //增加扇形范围
-            if(currentPointLightOuterAngle < 80f)
+            if (currentPointLightOuterAngle < 80f)
             {
                 currentPointLightOuterAngle += 1f;
 
@@ -129,7 +160,7 @@ public class FlashLight : MonoBehaviour
         if (Input.GetKey(KeyCode.I))
         {
             //缩小扇形范围
-            if(currentPointLightOuterAngle > 2f)
+            if (currentPointLightOuterAngle > 2f)
             {
                 currentPointLightOuterAngle -= 1f;
 
@@ -154,44 +185,44 @@ public class FlashLight : MonoBehaviour
 
         //TODO:根据人物的朝向修改方向
 
-        RaycastHit2D hit_Center = Physics2D.Raycast(this.transform.position, this.transform.up, 
-            flashLight.pointLightOuterRadius);
+        RaycastHit2D hit_Center = Physics2D.Raycast(this.transform.position, this.transform.up,
+            flashLight.pointLightOuterRadius, shadow);
 
         //Quaternion quaternion_Top_1 = Quaternion.AngleAxis(flashLight.pointLightOuterAngle / 4, new Vector3(0, 0, 1));
         //Vector2 tmp_Dir_Top_1 = quaternion_Top_1 * this.transform.up * flashLight.pointLightOuterRadius;//旋转后的射线
         //RaycastHit2D hit_Top_1 = Physics2D.Raycast(this.transform.position, tmp_Dir_Top_1.normalized, 
         //    flashLight.pointLightOuterRadius);
-        
+
         //Quaternion quaternion_Top_2 = Quaternion.AngleAxis(flashLight.pointLightOuterAngle / 8, new Vector3(0, 0, 1));
         //Vector2 tmp_Dir_Top_2 = quaternion_Top_2 * this.transform.up * flashLight.pointLightOuterRadius;//旋转后的射线
         //RaycastHit2D hit_Top_2 = Physics2D.Raycast(this.transform.position, tmp_Dir_Top_2.normalized, 
         //    flashLight.pointLightOuterRadius);
-        
+
         //Quaternion quaternion_Top_3 = Quaternion.AngleAxis(flashLight.pointLightOuterAngle / 8 * 3, new Vector3(0, 0, 1));
         //Vector2 tmp_Dir_Top_3 = quaternion_Top_3 * this.transform.up * flashLight.pointLightOuterRadius;//旋转后的射线
         //RaycastHit2D hit_Top_3 = Physics2D.Raycast(this.transform.position, tmp_Dir_Top_3.normalized, 
         //    flashLight.pointLightOuterRadius);
-        
+
         Quaternion quaternion_Bottom_1 = Quaternion.AngleAxis(-flashLight.pointLightOuterAngle / 4, new Vector3(0, 0, 1));
         Vector2 tmp_Dir_Bottom_1 = quaternion_Bottom_1 * this.transform.up * flashLight.pointLightOuterRadius;//旋转后的射线
-        RaycastHit2D hit_Bottom_1 = Physics2D.Raycast(this.transform.position, tmp_Dir_Bottom_1.normalized, 
-            flashLight.pointLightOuterRadius);
-        
+        RaycastHit2D hit_Bottom_1 = Physics2D.Raycast(this.transform.position, tmp_Dir_Bottom_1.normalized,
+            flashLight.pointLightOuterRadius, shadow);
+
         Quaternion quaternion_Bottom_2 = Quaternion.AngleAxis(-flashLight.pointLightOuterAngle / 8, new Vector3(0, 0, 1));
         Vector2 tmp_Dir_Bottom_2 = quaternion_Bottom_2 * this.transform.up * flashLight.pointLightOuterRadius;//旋转后的射线
-        RaycastHit2D hit_Bottom_2 = Physics2D.Raycast(this.transform.position, tmp_Dir_Bottom_2.normalized, 
-            flashLight.pointLightOuterRadius);
-        
+        RaycastHit2D hit_Bottom_2 = Physics2D.Raycast(this.transform.position, tmp_Dir_Bottom_2.normalized,
+            flashLight.pointLightOuterRadius, shadow);
+
         //Quaternion quaternion_Bottom_3 = Quaternion.AngleAxis(-flashLight.pointLightOuterAngle / 8 * 3, new Vector3(0, 0, 1));
         //Vector2 tmp_Dir_Bottom_3 = quaternion_Bottom_3 * this.transform.up * flashLight.pointLightOuterRadius;//旋转后的射线
         //RaycastHit2D hit_Bottom_3 = Physics2D.Raycast(this.transform.position, tmp_Dir_Bottom_3.normalized, 
         //    flashLight.pointLightOuterRadius);
 
         //检测机关
-        if (hit_Center.collider != null  && hit_Center.collider.CompareTag("Organ") && currrentLightState == LightState.SpotLight)
+        if (hit_Center.collider != null && hit_Center.collider.CompareTag("Organ") && currrentLightState == LightState.SpotLight)
         {
             timer += Time.deltaTime;
-            if(timer >= triggerTime)
+            if (timer >= triggerTime)
             {
                 //触发机关
                 Debug.Log("organs");
@@ -320,19 +351,19 @@ public class FlashLight : MonoBehaviour
             }
         }
     }
-    
+
     /// <summary>
     /// 生成当前物体的影子
     /// </summary>
     public void CreateShadow(GameObject _shadowTargetGameObject)
     {
-        for(int i = 0; i < shadowTargetData.shadowTargetsList.Count; i++)
-        {   
+        for (int i = 0; i < shadowTargetData.shadowTargetsList.Count; i++)
+        {
             //匹配名称
-            if(_shadowTargetGameObject.name == shadowTargetData.shadowTargetsList[i].shadowTargetName)
+            if (_shadowTargetGameObject.name == shadowTargetData.shadowTargetsList[i].shadowTargetName)
             {
                 //计算光源与ShadowTarget的距离
-                float tmp_Distance = Vector2.Distance(this.transform.position, 
+                float tmp_Distance = Vector2.Distance(this.transform.position,
                     _shadowTargetGameObject.transform.GetChild(1).transform.position);
 
                 //Shadow初始位置(TODO:这个位置还需要修改
@@ -364,4 +395,16 @@ public class FlashLight : MonoBehaviour
             currentSceneShadowList[i].gameObject.SetActive(false);
         }
     }
+    #endregion
+
+    #region 普通灯光状态
+    public void ChangeLightUp()
+    {
+        if (currrentLightState == LightState.LightUp)
+        {
+            flashLight.pointLightOuterAngle = 360;
+            flashLight.pointLightInnerAngle = 360;
+        }
+    }
+    #endregion
 }
