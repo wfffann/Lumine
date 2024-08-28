@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8658144612254975993}
   - component: {fileID: 5136971766320291451}
   - component: {fileID: 6149354953947926654}
-  m_Layer: 8
+  m_Layer: 6
   m_Name: Platform Down
   m_TagString: Untagged
   m_Icon: {fileID: 0}

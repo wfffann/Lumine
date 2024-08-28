@@ -1938,11 +1938,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5305973265913368240, guid: 2042730bedeb3624c9b71d1af4b03aa4, type: 3}
+      propertyPath: checkRadius
+      value: 1.5
+      objectReference: {fileID: 0}
     - target: {fileID: 8750573219327317340, guid: 2042730bedeb3624c9b71d1af4b03aa4, type: 3}
       propertyPath: m_Name
       value: Platform Up
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5345287729820222678, guid: 2042730bedeb3624c9b71d1af4b03aa4, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -1999,7 +2004,12 @@ PrefabInstance:
       propertyPath: m_Name
       value: Platform Down
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 6149354953947926654, guid: 857f7aa3aeebfde46a1f542a541d35ab, type: 3}
+      propertyPath: checkRadius
+      value: 1.5
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5136971766320291451, guid: 857f7aa3aeebfde46a1f542a541d35ab, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -2056,13 +2066,17 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 118374529728825291, guid: 28849545faa507c43a02161ce509ea29, type: 3}
+      propertyPath: shadow.m_Bits
+      value: 32768
+      objectReference: {fileID: 0}
     - target: {fileID: 1157952669574132361, guid: 28849545faa507c43a02161ce509ea29, type: 3}
       propertyPath: m_Name
       value: Light 2D (2)
       objectReference: {fileID: 0}
     - target: {fileID: 1157952669574132361, guid: 28849545faa507c43a02161ce509ea29, type: 3}
       propertyPath: m_Layer
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1157952669574132361, guid: 28849545faa507c43a02161ce509ea29, type: 3}
       propertyPath: m_TagString

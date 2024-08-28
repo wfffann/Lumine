@@ -7,6 +7,7 @@ public class Platform : MonoBehaviour
     public LightState currentPlatformState;
     private SpriteRenderer sr;
     private BoxCollider2D coll;
+    public float checkRadius;
 
     private void Awake()
     {
@@ -28,21 +29,49 @@ public class Platform : MonoBehaviour
         }
     }
 
-    private void OnTriggerStay2D(Collider2D collision)
+    private void FixedUpdate()
     {
-        if (collision.tag == "Player Light")
+        CheckCollision();
+    }
+
+    private void CheckCollision()
+    {
+        RaycastHit2D[] hits = Physics2D.CircleCastAll(transform.position, checkRadius, new Vector2(1f, 0));
+        foreach (var hit in hits)
         {
-            var currentState = collision.GetComponent<FlashLight>().currrentLightState;
-            if (currentState == currentPlatformState)
+            if (hit.collider == null)
             {
-                sr.enabled = true;
-                coll.enabled = true;
+                if (currentPlatformState == LightState.LightUp)
+                {
+                    sr.enabled = false;
+                    coll.enabled = false;
+                }
+                else
+                {
+                    sr.enabled = true;
+                    coll.enabled = true;
+                }
+                return;
             }
-            else
+            if (hit.collider.tag == "Player Light")
             {
-                sr.enabled = false;
-                coll.enabled = false;
+                var currentState = hit.collider.GetComponent<FlashLight>().currrentLightState;
+                if (currentState == currentPlatformState)
+                {
+                    sr.enabled = true;
+                    coll.enabled = true;
+                }
+                else
+                {
+                    sr.enabled = false;
+                    coll.enabled = false;
+                }
             }
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawWireSphere(transform.position, checkRadius);
     }
 }

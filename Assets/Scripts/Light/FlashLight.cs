@@ -26,13 +26,12 @@ public class FlashLight : MonoBehaviour
     public float raduisInner;
     public float raduisOuter;
 
-    public LayerMask shadow;
+    public LayerMask shadow; //给影子添加图层，避免检测到其它图层
 
     private float timer;
     public float triggerTime;
 
     private List<GameObject> currentSceneShadowList = new List<GameObject>();//当前场景的阴影集合
-
 
     private void Awake()
     {
@@ -84,7 +83,7 @@ public class FlashLight : MonoBehaviour
         ChangeFlashLight();
         RaycastCheck();
         ChangeLightUp(); 
-    }
+    }   
 
     /// <summary>
     /// 检查具体的灯光状态
