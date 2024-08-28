@@ -27,5 +27,8 @@ public class PlayerGrabState : PlayerState
 
         if (Input.GetKeyDown(KeyCode.Space))
             stateMachine.ChangeState(player.climbState);
+
+        if(!player.isWall || !player.canGrab)
+            stateMachine.ChangeState(player.idleState);
     }
 }

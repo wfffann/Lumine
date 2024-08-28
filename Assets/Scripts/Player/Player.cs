@@ -94,10 +94,6 @@ public class Player : MonoBehaviour
         isGround = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
         isWall = Physics2D.OverlapCircle(wallCheck.position, wallCheckRadius, groundLayer);
         canGrab = !Physics2D.OverlapCircle(grabCheck.position, grabCheckRadius, groundLayer);
-        if (isGround)
-        {
-            rb.gravityScale = 4;
-        }
     }
 
     /// <summary>
