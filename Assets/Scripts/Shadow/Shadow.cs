@@ -10,7 +10,12 @@ public class Shadow : MonoBehaviour
 
     [Header("ª˘±æ…Ë÷√")]
     private float distance;
-    private float changeAmount = 0.05f;
+    //private float changeAmount = 0.05f;
+
+    private void Start()
+    {
+        playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+    }
 
     private void Update()
     {
@@ -33,16 +38,15 @@ public class Shadow : MonoBehaviour
     {
         float tmp_Distance = (this.transform.parent.transform.GetChild(1).transform.position - playerTransform.position).magnitude;
 
-        if(playerTransform.position.x <= this.transform.position.x)
+        if(playerTransform.position.x <= this.transform.parent.transform.GetChild(1).transform.position.x)
         {
             this.transform.localPosition = new Vector2(Mathf.Abs(tmp_Distance), -playerTransform.position.y);
         }
         else
         {
-            this.transform.localPosition = new Vector2(-Mathf.Abs(tmp_Distance), -playerTransform.position.y);
+            this.transform.localPosition = new Vector2(-1 * Mathf.Abs(tmp_Distance), -playerTransform.position.y);
         }
         
-
         ChangeShadowScale(tmp_Distance);
     }
 
