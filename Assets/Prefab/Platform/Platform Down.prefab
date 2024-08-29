@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 401189646364614628}
   - component: {fileID: 6870787770290769410}
   - component: {fileID: 8658144612254975993}
+  - component: {fileID: 3929098739342374765}
   - component: {fileID: 6149354953947926654}
   m_Layer: 6
   m_Name: Platform Down
@@ -131,6 +132,18 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &3929098739342374765
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1557037516633348777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3892fe8def18e954bafc667c6f8b89c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &6149354953947926654
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -144,4 +157,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentPlatformState: 0
-  checkRadius: 0
+  lightLayer:
+    serializedVersion: 2
+    m_Bits: 1024
+  checkRadius: 1.5

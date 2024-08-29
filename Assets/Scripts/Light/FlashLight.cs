@@ -90,7 +90,7 @@ public class FlashLight : MonoBehaviour
         //¿ª¹Ø¾Û¹â×´Ì¬
         if (Input.GetKeyDown(KeyCode.U))
         {
-            if (currrentLightState == LightState.LightDown)
+            if (currrentLightState == LightState.LightDown || currrentLightState == LightState.LightUp)
                 currrentLightState = LightState.SpotLight;
             else if (currrentLightState == LightState.SpotLight)
                 currrentLightState = LightState.LightDown;
@@ -110,7 +110,7 @@ public class FlashLight : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.V))
         {
-            if (currrentLightState == LightState.LightDown)
+            if (currrentLightState == LightState.LightDown || currrentLightState == LightState.SpotLight)
                 currrentLightState = LightState.LightUp;
             else if (currrentLightState == LightState.LightUp)
                 currrentLightState = LightState.LightDown;
