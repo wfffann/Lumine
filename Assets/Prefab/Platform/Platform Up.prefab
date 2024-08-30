@@ -94,7 +94,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8750573219327317340}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -144,6 +144,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3892fe8def18e954bafc667c6f8b89c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  originColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!114 &5305973265913368240
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -159,5 +160,5 @@ MonoBehaviour:
   currentPlatformState: 1
   lightLayer:
     serializedVersion: 2
-    m_Bits: 1024
+    m_Bits: 4096
   checkRadius: 1.5

@@ -55,6 +55,32 @@ public class FlashLight : MonoBehaviour
     {
         //Debug.DrawRay(this.transform.position, this.transform.up * flashLight.pointLightOuterRadius, Color.red);
 
+        //绘制辅助线
+        DrawHelpLine();
+
+        //检查灯光状态；
+        CheckLightState();
+        ChangeFlashLight();
+        RaycastCheck();
+        ChangeLightUp();
+
+        //灯光跟随
+        LightFollow();
+    }
+
+    private void LightFollow()
+    {
+        //if (currrentLightState == LightState.LightDown || currrentLightState == LightState.LightUp)
+        //{
+        //    transform.position = player.transform.position;
+        //}
+    }
+
+    /// <summary>
+    /// 绘制辅助线
+    /// </summary>
+    private void DrawHelpLine()
+    {
         if (player.facingDir == 1)
         {
             Quaternion quaternion_Bottom_1 = Quaternion.AngleAxis(-flashLight.pointLightOuterAngle / 4, new Vector3(0, 0, 1));
@@ -75,12 +101,7 @@ public class FlashLight : MonoBehaviour
             Vector2 tmp_Dir_Bottom_2 = quaternion_Bottom_2 * this.transform.up * flashLight.pointLightOuterRadius;//旋转后的射线
             Debug.DrawRay(this.transform.position, tmp_Dir_Bottom_2, Color.red);
         }
-            
-        CheckLightState();
-        ChangeFlashLight();
-        RaycastCheck();
-        ChangeLightUp(); 
-    }   
+    }
 
     /// <summary>
     /// 检查具体的灯光状态
