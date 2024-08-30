@@ -19,12 +19,6 @@ public class Shadow : MonoBehaviour
 
     private void Update()
     {
-        ////寻找Player
-        //if(this.gameObject.activeInHierarchy == true)
-        //{
-
-        //}
-
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
 
         //改变阴影的位置
