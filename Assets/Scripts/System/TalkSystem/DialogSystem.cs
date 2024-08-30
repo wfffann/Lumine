@@ -11,13 +11,18 @@ public class DialogSystem : MonoBehaviour
 
     public TextAsset textFile;//文本文件
 
-    public Sprite face01, face02;//TODO:怎么寻找头像
+    private Sprite currentFaceSprite;//当前人物的头像
+
+    public HeadShotSpriteData headShotSpriteData;
+    public TextFileData textFileData;
 
     [Header("状态检测")]
     private bool textFinished;
     private bool cancelTyping;
 
     [Header("基本设置")]
+    public string targetCharacterName;
+
     public int index;
     public float textSpeed;//文本输出速度
 
@@ -25,6 +30,9 @@ public class DialogSystem : MonoBehaviour
 
     private void Awake()
     {
+        //赋值对话角色文本
+        GetTextAseetByName(targetCharacterName);
+
         GetTextFormFile(textFile);//读取文本内容
     }
 
@@ -82,15 +90,26 @@ public class DialogSystem : MonoBehaviour
         textFinished = false;
         textLable.text = "";//清空文本框
 
+        //TODO:
         switch (textList[index].Trim())
         {
             case "A":
-                //faceImage.sprite = face01;
+                //获取人物头像
+                //GetSpriteByName();
+
+                //赋值人物头像
+
+
                 index++;
                 break;
 
             case "B":
-                //faceImage.sprite = face02;
+                //获取人物头像
+                //GetSpriteByName();
+
+                //赋值人物头像
+
+
                 index++;
                 break;
 
@@ -111,5 +130,41 @@ public class DialogSystem : MonoBehaviour
         cancelTyping = false;
         textFinished = true;
         index++;
+    }
+
+    /// <summary>
+    /// 获取当前人物的头像
+    /// </summary>
+    /// <param name="_name"></param>
+    /// <returns></returns>
+    public Sprite GetSpriteByName(string _name)
+    {
+        foreach(var sprite in headShotSpriteData.headShotSpritesList)
+        {
+            if(sprite.name == _name)
+            {
+                return sprite.headShotSprite;
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// 寻找对话人物的文本文件
+    /// </summary>
+    /// <param name="_name"></param>
+    /// <returns></returns>
+    public TextAsset GetTextAseetByName(string _name)
+    {
+        foreach(var file in textFileData.textFilesList)
+        {
+            if(file.fileName == _name)
+            {
+                return file.textAsset;
+            }
+        }
+
+        return null;
     }
 }

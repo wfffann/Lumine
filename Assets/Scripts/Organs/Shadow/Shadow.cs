@@ -19,12 +19,6 @@ public class Shadow : MonoBehaviour
 
     private void Update()
     {
-        ////寻找Player
-        //if(this.gameObject.activeInHierarchy == true)
-        //{
-
-        //}
-
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
 
         //改变阴影的位置
@@ -38,7 +32,7 @@ public class Shadow : MonoBehaviour
     {
         float tmp_Distance = (this.transform.parent.transform.GetChild(1).transform.position - playerTransform.position).magnitude;
 
-        if(playerTransform.position.x <= this.transform.parent.transform.GetChild(1).transform.position.x)
+        if(playerTransform.position.x <= this.transform.parent.transform.GetChild(2).transform.position.x)
         {
             this.transform.localPosition = new Vector2(Mathf.Abs(tmp_Distance), -playerTransform.position.y);
         }
