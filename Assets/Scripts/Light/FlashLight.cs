@@ -241,21 +241,38 @@ public class FlashLight : MonoBehaviour
 
     public void AboutShadow(RaycastHit2D hit)
     {
-        //邻边向量
-        Vector3 tmp_Dir_1 = new Vector3(hit.collider.gameObject.transform.GetChild(0).position.x, this.transform.position.y)
-            - this.transform.position;
-        //斜边向量
-        Vector3 tmp_Dir_2 = hit.collider.gameObject.transform.GetChild(0).position - this.transform.position;
+        ////邻边向量
+        //Vector3 tmp_Dir_1 = new Vector3(hit.collider.gameObject.transform.GetChild(0).position.x, this.transform.position.y)
+        //    - this.transform.position;
+        ////斜边向量
+        //Vector3 tmp_Dir_2 = hit.collider.gameObject.transform.GetChild(0).position - this.transform.position;
+
+        Vector3 tmp_Dir_1;
+        Vector3 tmp_Dir_2;
+        if (player.facingDir == 1)
+        {
+            tmp_Dir_1 = new Vector3(hit.collider.gameObject.transform.GetChild(0).position.x, this.transform.position.y)
+                - this.transform.position;
+
+            tmp_Dir_2 = hit.collider.gameObject.transform.GetChild(0).position - this.transform.position;
+        }
+        else
+        {
+            tmp_Dir_1 = new Vector3(hit.collider.gameObject.transform.GetChild(1).position.x, this.transform.position.y)
+                - this.transform.position;
+
+            tmp_Dir_2 = hit.collider.gameObject.transform.GetChild(1).position - this.transform.position;
+        }
 
         if (Mathf.Cos(flashLight.pointLightOuterAngle / 2 * Mathf.Deg2Rad) <= tmp_Dir_1.magnitude / tmp_Dir_2.magnitude)
         {
             //显示阴影
-            if (hit.collider.gameObject.transform.childCount == 3 &&
-                hit.collider.gameObject.transform.GetChild(2).GetComponent<Shadow>() != null)
+            if (hit.collider.gameObject.transform.childCount == 4 &&
+                hit.collider.gameObject.transform.GetChild(3).GetComponent<Shadow>() != null)
             {
 
-                hit.collider.transform.GetChild(2).transform.GetComponent<Shadow>().ChangeShadowPosition();
-                hit.collider.transform.GetChild(2).gameObject.SetActive(true);
+                hit.collider.transform.GetChild(3).transform.GetComponent<Shadow>().ChangeShadowPosition();
+                hit.collider.transform.GetChild(3).gameObject.SetActive(true);
             }
             else
             {
@@ -267,12 +284,12 @@ public class FlashLight : MonoBehaviour
         else
         {
             //Debug.Log("隐藏阴影");
-            if (hit.collider.gameObject.transform.childCount == 3 &&
-                hit.collider.gameObject.transform.GetChild(2).GetComponent<Shadow>() != null)
+            if (hit.collider.gameObject.transform.childCount == 4 &&
+                hit.collider.gameObject.transform.GetChild(3).GetComponent<Shadow>() != null)
             {
                 Debug.Log("隐藏阴影");
 
-                hit.collider.transform.GetChild(2).gameObject.SetActive(false);
+                hit.collider.transform.GetChild(3).gameObject.SetActive(false);
             }
         }
     }
