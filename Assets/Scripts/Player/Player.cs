@@ -17,6 +17,7 @@ public class Player : MonoBehaviour
     public bool gameOver = false;
 
     [Header("地面和墙面检测")]
+    public Transform lightPos;
     public Transform groundCheck;
     public Transform wallCheck;
     public Transform grabCheck;

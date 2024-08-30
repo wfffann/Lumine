@@ -59,6 +59,20 @@ public class Platform : MonoBehaviour
                     itemFader.FadeOut();
                     coll.enabled = false;
                 }
+                //È«¾Ö¹âÕÕ
+                if (currentState == LightState.GlobalLight)
+                {
+                    if (currentPlatformState == LightState.LightUp)
+                    {
+                        itemFader.FadeIn();
+                        coll.enabled = true;
+                    }
+                    else
+                    {
+                        itemFader.FadeOut();
+                        coll.enabled = false;
+                    }
+                }
                 return;
             }
         }

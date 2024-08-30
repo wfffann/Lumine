@@ -23,7 +23,15 @@ public class FlashLight : MonoBehaviour
     private float currentPointLightOuterAngle; //当前外圈角度
     private float originalPointLightInnerAngle; //原始内圈角度
     private float currentPointLightInnerAngle; //当前内圈角度
+    private float originalCollRaius;
 
+    [Header("全局光照设置")]
+    public float globalMaxRadius;
+    public float radiusIncreaseSpeed;
+    public float switchTime;
+    [SerializeField] private float switchTimeCounter;
+
+    [Header("影子设置")]
     public float raduisInner;
     public float raduisOuter;
 
@@ -33,6 +41,16 @@ public class FlashLight : MonoBehaviour
     public float triggerTime;
 
     private List<GameObject> currentSceneShadowList = new List<GameObject>();//当前场景的阴影集合
+
+    private void OnEnable()
+    {
+        EventHandler.BaseGlobal += OnBaseGlobal;
+    }
+
+    private void OnDisable()
+    {
+        EventHandler.BaseGlobal -= OnBaseGlobal;
+    }
 
     private void Awake()
     {
@@ -48,7 +66,7 @@ public class FlashLight : MonoBehaviour
         //关闭所有影子
         CloseAllShadow();
         flashLight.enabled = false;
-        coll.enabled = false;
+        originalCollRaius = coll.radius;
     }
 
     private void Update()
@@ -62,7 +80,12 @@ public class FlashLight : MonoBehaviour
         CheckLightState();
         ChangeFlashLight();
         RaycastCheck();
+
+        //普通光
         ChangeLightUp();
+
+        //全局光
+        ChangeGlobalLight();
 
         //灯光跟随
         LightFollow();
@@ -70,10 +93,10 @@ public class FlashLight : MonoBehaviour
 
     private void LightFollow()
     {
-        //if (currrentLightState == LightState.LightDown || currrentLightState == LightState.LightUp)
-        //{
-        //    transform.position = player.transform.position;
-        //}
+        if (currrentLightState == LightState.LightDown || currrentLightState == LightState.LightUp || currrentLightState == LightState.SpotLight)
+        {
+            transform.position = player.lightPos.position;
+        }
     }
 
     /// <summary>
@@ -378,9 +401,62 @@ public class FlashLight : MonoBehaviour
     {
         if (currrentLightState == LightState.LightUp)
         {
+            flashLight.pointLightOuterRadius = 6;
             flashLight.pointLightOuterAngle = 360;
             flashLight.pointLightInnerAngle = 360;
+
+            //将碰撞体也设置为正常状态
+            coll.radius = originalCollRaius;
         }
     }
     #endregion
+
+    #region 全局光照状态
+
+    /// <summary>
+    /// 灯光放到基座上进行全局光照
+    /// </summary>
+    /// <param name="vector"></param>
+    /// <exception cref="System.NotImplementedException"></exception>
+    private void OnBaseGlobal(Vector3 basePos)
+    {
+        if (currrentLightState == LightState.GlobalLight)
+        {
+            currrentLightState = LightState.LightUp;
+            return;
+        }
+        currrentLightState = LightState.GlobalLight;
+        transform.position = basePos + new Vector3(0, 0.7f, 0);
+        flashLight.enabled = true;
+    }
+    public void ChangeGlobalLight()
+    {
+        if(currrentLightState == LightState.GlobalLight)
+        {
+            if(flashLight.pointLightOuterRadius < globalMaxRadius)
+            {
+                flashLight.pointLightOuterRadius += radiusIncreaseSpeed * Time.deltaTime;
+                coll.radius += radiusIncreaseSpeed * Time.deltaTime * 3f;
+                return;
+            }
+
+            //放大到全局光，开始闪烁
+            switchTimeCounter += Time.deltaTime;
+            if(switchTimeCounter > switchTime)
+            {
+                switchTimeCounter = 0;
+                flashLight.enabled = !flashLight.enabled;
+                coll.enabled = !coll.enabled;
+            }
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if(collision.tag == "Plane" && currrentLightState == LightState.GlobalLight)
+        {
+            collision.GetComponent<ShadowCaster2D>().enabled = false;
+        }
+    }
+    #endregion 
 }
