@@ -20,9 +20,8 @@ public class FlashLight : MonoBehaviour
     public LightState currrentLightState = LightState.LightDown; //灯光状态
 
     [Header("基本设置")]
-    private float originalPointLightOuterAngle; //原始外圈角度
+    public float originalSpotLightOuterAngle; //原始聚光状态的外圈角度
     private float currentPointLightOuterAngle; //当前外圈角度
-    private float originalPointLightInnerAngle; //原始内圈角度
     private float currentPointLightInnerAngle; //当前内圈角度
     private float originalCollRaius;
 
@@ -59,8 +58,7 @@ public class FlashLight : MonoBehaviour
         flashLight = GetComponent<Light2D>();
         coll = GetComponent<CircleCollider2D>();
 
-        originalPointLightOuterAngle = flashLight.pointLightOuterAngle;
-        currentPointLightOuterAngle = originalPointLightOuterAngle;
+        currentPointLightOuterAngle = originalSpotLightOuterAngle;//赋值聚光灯的初始角度
 
         raduisInner = flashLight.pointLightInnerRadius;
         raduisOuter = flashLight.pointLightOuterRadius;
@@ -73,14 +71,16 @@ public class FlashLight : MonoBehaviour
 
     private void Update()
     {
-        //Debug.DrawRay(this.transform.position, this.transform.up * flashLight.pointLightOuterRadius, Color.red);
-
         //绘制辅助线
         DrawHelpLine();
 
         //检查灯光状态；
         CheckLightState();
-        ChangeFlashLight();
+        
+        //聚光灯的焦距改变
+        ChangeSpotLight();
+        
+        //聚光状态的射线检测
         RaycastCheck();
 
         //普通光
@@ -180,7 +180,7 @@ public class FlashLight : MonoBehaviour
     /// <summary>
     /// 改变手电筒的焦距
     /// </summary>
-    public void ChangeFlashLight()
+    public void ChangeSpotLight()
     {
         if (currrentLightState != LightState.SpotLight) return;//不是聚光状态
 
@@ -465,6 +465,10 @@ public class FlashLight : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 全局光照下状态下，关闭物体产生阴影的组件
+    /// </summary>
+    /// <param name="collision"></param>
     private void OnTriggerStay2D(Collider2D collision)
     {
         if(collision.tag == "Plane" && currrentLightState == LightState.GlobalLight)
