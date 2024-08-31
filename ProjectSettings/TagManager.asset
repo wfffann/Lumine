@@ -8,6 +8,8 @@ TagManager:
   - Organ
   - ShadowTarget
   - Player Light
+  - BackGround
+  - CameraTrigger
   - Light Pos
   - Plane
   layers:

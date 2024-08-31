@@ -12,4 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8728a4271cf63d4e82d51862032f8f0, type: 3}
   m_Name: Text File Data
   m_EditorClassIdentifier: 
-  textFilesList: []
+  textFilesList:
+  - fileName: 
+    textAsset: {fileID: 0}
