@@ -5,12 +5,18 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
+/// <summary>
+/// 两种大方向
+/// </summary>
 public enum TurnDirctionTwoDir
 {
     Horizontal,
     Vertical
 }
 
+/// <summary>
+/// 四种小方向
+/// </summary>
 public enum TurnDirctionFourDir
 {
     TurnTop,
@@ -23,7 +29,6 @@ public enum TurnDirctionFourDir
 public class CameraController : MonoBehaviour
 {
     [Header("组件获取")]
-    public Camera camera;
     private BoxCollider2D coll;
 
     [Header("基本设置")]
@@ -33,9 +38,9 @@ public class CameraController : MonoBehaviour
 
     private void Start()
     {
-        cameraHeight = 2f * camera.orthographicSize;
+        cameraHeight = 2f * Camera.main.orthographicSize;
         //cameraWidth = Screen.width / Screen.height * cameraHeight * 2f;//TODO:长度不对
-        cameraWidth = camera.orthographicSize * Screen.width / Screen.height * 2;
+        cameraWidth = Camera.main.orthographicSize * Screen.width / Screen.height * 2;
         //Debug.Log("cameraWidth: + " + cameraWidth);
     }
  }

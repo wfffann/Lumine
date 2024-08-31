@@ -5,13 +5,24 @@ using UnityEngine;
 
 public class Base : MonoBehaviour
 {
+    [Header("组件获取")]
+    public Player player;
+
+    [Header("状态检测")]
     private bool canPlaceGlobalLight = false;
+    public bool isPlaced;//是否放置灯
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.F) && canPlaceGlobalLight)
+        if (Input.GetKeyDown(KeyCode.F) && canPlaceGlobalLight && !isPlaced)
         {
+            isPlaced = true;
             EventHandler.CallBaseGlobal(transform.position);
+        }
+        else if(Input.GetKeyDown(KeyCode.F) && canPlaceGlobalLight && isPlaced)
+        {
+            isPlaced = false;
+            EventHandler.RaisedGetupLightEvent(player.lightPos.position);
         }
     }
 

@@ -48,7 +48,7 @@ public class Platform : MonoBehaviour
         {
             if (hit.collider.tag == "Player Light")
             {
-                var currentState = hit.collider.GetComponent<FlashLight>().currrentLightState;
+                var currentState = hit.collider.GetComponent<LightController>().currrentLightState;
                 if (currentState == currentPlatformState)
                 {
                     itemFader.FadeIn();

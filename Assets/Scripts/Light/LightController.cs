@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Rendering.UI;
 using UnityEngine.Rendering.Universal;
 
-public class FlashLight : MonoBehaviour
+public class LightController : MonoBehaviour
 {
     [Header("组件获取")]
     private Light2D flashLight;//SpotLight
@@ -43,15 +43,6 @@ public class FlashLight : MonoBehaviour
 
     private List<GameObject> currentSceneShadowList = new List<GameObject>();//当前场景的阴影集合
 
-    private void OnEnable()
-    {
-        EventHandler.BaseGlobal += OnBaseGlobal;
-    }
-
-    private void OnDisable()
-    {
-        EventHandler.BaseGlobal -= OnBaseGlobal;
-    }
 
     private void Awake()
     {
@@ -69,13 +60,25 @@ public class FlashLight : MonoBehaviour
         originalCollRaius = coll.radius;
     }
 
+    private void OnEnable()
+    {
+        EventHandler.BaseGlobal += PlacedLightOnBase;
+        EventHandler.GetupLightEvent += GetupLightFromBase;
+    }
+
+    private void OnDisable()
+    {
+        EventHandler.BaseGlobal -= PlacedLightOnBase;
+        EventHandler.GetupLightEvent -= GetupLightFromBase;
+    }
+
     private void Update()
     {
         //绘制辅助线
         DrawHelpLine();
 
         //检查灯光状态；
-        CheckLightState();
+        SwitchLightState();
         
         //聚光灯的焦距改变
         ChangeSpotLight();
@@ -131,47 +134,71 @@ public class FlashLight : MonoBehaviour
     /// <summary>
     /// 检查具体的灯光状态
     /// </summary>
-    public void CheckLightState()
+    public void SwitchLightState()
     {
         //开关聚光状态
         if (Input.GetKeyDown(KeyCode.U))
         {
-            if (currrentLightState == LightState.LightDown || currrentLightState == LightState.LightUp)
-                currrentLightState = LightState.SpotLight;
-            else if (currrentLightState == LightState.SpotLight)
-                currrentLightState = LightState.LightDown;
+            switch (currrentLightState)
+            {
+                case LightState.LightDown:
+                    currrentLightState = LightState.SpotLight;
+                    flashLight.enabled = true;
+                    coll.enabled = false;
+                    break;
 
-            if (currrentLightState == LightState.LightDown)
-            {
-                //关闭所有影子
-                CloseAllShadow();
-                flashLight.enabled = false;
-                coll.enabled = true;
-            }
-            else
-            {
-                flashLight.enabled = true;
-                coll.enabled = false;
+                case LightState.LightUp:
+                    currrentLightState = LightState.SpotLight;
+                    flashLight.enabled = true;
+                    coll.enabled = false;
+                    break;
+
+                case LightState.SpotLight:
+                    currrentLightState = LightState.LightDown;
+                    //关闭所有影子
+                    CloseAllShadow();
+                    flashLight.enabled = false;
+                    coll.enabled = true;
+
+                    break;
+
+                case LightState.GlobalLight:
+                    break;
+
+                default:
+                    break;
             }
         }
+        //开开起正常灯状态
         else if (Input.GetKeyDown(KeyCode.V))
         {
-            if (currrentLightState == LightState.LightDown || currrentLightState == LightState.SpotLight)
-                currrentLightState = LightState.LightUp;
-            else if (currrentLightState == LightState.LightUp)
-                currrentLightState = LightState.LightDown;
+            switch (currrentLightState)
+            {
+                case LightState.LightDown:
+                    currrentLightState = LightState.LightUp;
+                    flashLight.enabled = true;
+                    coll.enabled = true;
+                    break;
 
-            if (currrentLightState == LightState.LightDown)
-            {
-                //关闭所有影子
-                CloseAllShadow();
-                flashLight.enabled = false;
-                coll.enabled = true;
-            }
-            else
-            {
-                flashLight.enabled = true;
-                coll.enabled = true;
+                case LightState.LightUp:
+                    currrentLightState = LightState.LightDown;
+                    //关闭所有影子
+                    CloseAllShadow();
+                    flashLight.enabled = false;
+                    coll.enabled = true;
+                    break;
+
+                case LightState.SpotLight:
+                    currrentLightState = LightState.LightUp;
+                    flashLight.enabled = true;
+                    coll.enabled = true;
+                    break;
+
+                case LightState.GlobalLight:
+                    break;
+
+                default:
+                    break;
             }
         }
     }
@@ -225,9 +252,11 @@ public class FlashLight : MonoBehaviour
     {
         if (currrentLightState != LightState.SpotLight) return;
 
+        //中心射出的射线
         RaycastHit2D hit_Center = Physics2D.Raycast(this.transform.position, this.transform.up,
             flashLight.pointLightOuterRadius, shadow);
 
+        //向下的两条射线
         RaycastHit2D hit_Bottom_1;
         RaycastHit2D hit_Bottom_2;
         if (player.facingDir == 1)
@@ -261,23 +290,25 @@ public class FlashLight : MonoBehaviour
             timer += Time.deltaTime;
             if (timer >= triggerTime)
             {
-                //触发机关
+                //触发机关(TODO:
                 Debug.Log("organs");
             }
         }
 
+        //如果有一条射线检测到
         if (hit_Center.collider != null && hit_Center.collider.CompareTag("ShadowTarget") && currrentLightState == LightState.SpotLight)
         {
-            AboutShadow(hit_Center);
+            ShadowActivities(hit_Center);
         }
         else if (hit_Bottom_1.collider != null && hit_Bottom_1.collider.CompareTag("ShadowTarget") && currrentLightState == LightState.SpotLight)
         {
-            AboutShadow(hit_Bottom_1);
+            ShadowActivities(hit_Bottom_1);
         }
         else if (hit_Bottom_2.collider != null && hit_Bottom_2.collider.CompareTag("ShadowTarget") && currrentLightState == LightState.SpotLight)
         {
-            AboutShadow(hit_Bottom_2);
+            ShadowActivities(hit_Bottom_2);
         }
+        //没有射线检测到
         else
         {
             //关闭所有阴影
@@ -285,16 +316,12 @@ public class FlashLight : MonoBehaviour
         }
     }
 
-    public void AboutShadow(RaycastHit2D hit)
+    /// <summary>
+    /// 关于阴影的显示或者隐藏
+    /// </summary>
+    /// <param name="hit"></param>
+    public void ShadowActivities(RaycastHit2D hit)
     {
-        ////邻边向量
-        //Vector3 tmp_Dir_1 = new Vector3(hit.collider.gameObject.transform.GetChild(0).position.x, this.transform.position.y)
-        //    - this.transform.position;
-        ////斜边向量
-        //Vector3 tmp_Dir_2 = hit.collider.gameObject.transform.GetChild(0).position - this.transform.position;
-
-        Debug.Log(123);
-
         Vector3 tmp_Dir_1;
         Vector3 tmp_Dir_2;
         if (player.facingDir == 1)
@@ -324,19 +351,16 @@ public class FlashLight : MonoBehaviour
             }
             else
             {
-                //创建
+                //创建阴影
                 CreateShadow(hit.collider.gameObject);
             }
         }
         //不在生成影子范围内
         else
         {
-            //Debug.Log("隐藏阴影");
             if (hit.collider.gameObject.transform.childCount == 4 &&
                 hit.collider.gameObject.transform.GetChild(3).GetComponent<Shadow>() != null)
             {
-                Debug.Log("隐藏阴影");
-
                 hit.collider.transform.GetChild(3).gameObject.SetActive(false);
             }
         }
@@ -432,7 +456,7 @@ public class FlashLight : MonoBehaviour
     /// </summary>
     /// <param name="vector"></param>
     /// <exception cref="System.NotImplementedException"></exception>
-    private void OnBaseGlobal(Vector3 basePos)
+    private void PlacedLightOnBase(Vector3 basePos)
     {
         if (currrentLightState == LightState.GlobalLight)
         {
@@ -442,6 +466,8 @@ public class FlashLight : MonoBehaviour
         currrentLightState = LightState.GlobalLight;
         transform.position = basePos + new Vector3(0, 0.7f, 0);
         flashLight.enabled = true;
+
+        transform.SetParent(GameObject.Find("PlayerController").transform, true);
     }
     public void ChangeGlobalLight()
     {
@@ -463,6 +489,18 @@ public class FlashLight : MonoBehaviour
                 coll.enabled = !coll.enabled;
             }
         }
+    }
+
+    /// <summary>
+    /// 从基座上捡起灯
+    /// </summary>
+    public void GetupLightFromBase(Vector3 _Pos)
+    {
+        transform.SetParent(player.transform, true);
+        transform.position = _Pos;
+        currrentLightState = LightState.LightUp;
+        flashLight.enabled = true;
+        coll.enabled = true;
     }
 
     /// <summary>
