@@ -1,6 +1,7 @@
 using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering.UI;
@@ -16,7 +17,7 @@ public class FlashLight : MonoBehaviour
     public Player player;
 
     [Header("状态检测")]
-    public LightState currrentLightState = LightState.LightDown; //是否聚光
+    public LightState currrentLightState = LightState.LightDown; //灯光状态
 
     [Header("基本设置")]
     private float originalPointLightOuterAngle; //原始外圈角度
@@ -28,8 +29,9 @@ public class FlashLight : MonoBehaviour
     [Header("全局光照设置")]
     public float globalMaxRadius;
     public float radiusIncreaseSpeed;
-    public float switchTime;
     [SerializeField] private float switchTimeCounter;
+    public float switchTime;
+    private List<ShadowCaster2D> allShadowCaster = new List<ShadowCaster2D>();
 
     [Header("影子设置")]
     public float raduisInner;
@@ -291,6 +293,8 @@ public class FlashLight : MonoBehaviour
         ////斜边向量
         //Vector3 tmp_Dir_2 = hit.collider.gameObject.transform.GetChild(0).position - this.transform.position;
 
+        Debug.Log(123);
+
         Vector3 tmp_Dir_1;
         Vector3 tmp_Dir_2;
         if (player.facingDir == 1)
@@ -407,6 +411,16 @@ public class FlashLight : MonoBehaviour
 
             //将碰撞体也设置为正常状态
             coll.radius = originalCollRaius;
+
+            //将场景内所有的地形的阴影遮挡开启
+            if (allShadowCaster.Count > 0)
+            {
+                foreach (var sc in allShadowCaster)
+                {
+                    if (sc != null && sc.enabled == false)
+                        sc.enabled = true;
+                }
+            }
         }
     }
     #endregion
@@ -455,7 +469,9 @@ public class FlashLight : MonoBehaviour
     {
         if(collision.tag == "Plane" && currrentLightState == LightState.GlobalLight)
         {
-            collision.GetComponent<ShadowCaster2D>().enabled = false;
+            var sc = collision.GetComponent<ShadowCaster2D>();
+            allShadowCaster.Add(sc);
+            sc.enabled = false;
         }
     }
     #endregion 

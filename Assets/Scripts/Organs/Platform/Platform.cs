@@ -41,7 +41,7 @@ public class Platform : MonoBehaviour
 
     private void CheckCollision()
     {
-        RaycastHit2D[] hits = Physics2D.CircleCastAll(transform.position, checkRadius, new Vector2(1f, 0), lightLayer);
+        RaycastHit2D[] hits = Physics2D.CircleCastAll(transform.position, checkRadius, new Vector2(0, 0), lightLayer);
 
         //检测光显暗显平台的显示，如果都没有检测到则正常显示
         foreach (var hit in hits)
@@ -88,7 +88,6 @@ public class Platform : MonoBehaviour
             itemFader.FadeIn();
             coll.enabled = true;
         }
-        return ;
     }
 
     private void OnDrawGizmos()
