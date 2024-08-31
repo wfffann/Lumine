@@ -458,7 +458,7 @@ public class LightController : MonoBehaviour
     /// <exception cref="System.NotImplementedException"></exception>
     private void PlacedLightOnBase(Vector3 basePos)
     {
-        if (currrentLightState == LightState.GlobalLight)
+        if (currrentLightState == LightState.GlobalLight || currrentLightState == LightState.LightDown || currrentLightState == LightState.SpotLight)
         {
             currrentLightState = LightState.LightUp;
             return;
