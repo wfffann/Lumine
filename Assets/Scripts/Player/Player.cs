@@ -14,6 +14,12 @@ public class Player : MonoBehaviour
     public float speed; //速度
     public float jumpForce; //跳跃施加力
     public float jumpTime;
+    public float rollForce; //翻滚施加力
+    //public float rollDeceleration; // 翻滚减速度
+    public float rollFrictionCoefficient;//翻滚摩擦系数
+    public float rotationSpeed;//旋转速度
+    //public float rollTime;// 翻滚时间
+    public float rollDistance; // 翻滚的距离
     public bool gameOver = false;
 
     [Header("地面和墙面检测")]
@@ -31,6 +37,7 @@ public class Player : MonoBehaviour
     public bool isGround;
     public bool isWall;
     public bool isJump;
+    public bool isRoll;
     public bool canGrab;
     public bool isGrab = false;
     public bool isBusy = false;
@@ -47,6 +54,7 @@ public class Player : MonoBehaviour
     public PlayerGroundState groundState { get; private set; }
     public PlayerIdleState idleState { get; private set; }
     public PlayerMoveState moveState { get; private set; }
+    public PlayerRollState rollState { get; private set; }
     //空中状态
     public PlayerJumpState jumpState { get; private set; }
     public PlayerAirState airState { get; private set; }
@@ -61,6 +69,7 @@ public class Player : MonoBehaviour
 
         idleState = new PlayerIdleState(this, stateMachine, "Idle");
         moveState = new PlayerMoveState(this, stateMachine, "Move");
+        rollState = new PlayerRollState(this, stateMachine, "Roll");
         jumpState = new PlayerJumpState(this, stateMachine, "Jump");
         airState = new PlayerAirState(this, stateMachine, "Jump");
         grabState = new PlayerGrabState(this, stateMachine, "Grab");

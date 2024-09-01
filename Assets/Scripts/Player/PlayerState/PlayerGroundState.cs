@@ -29,5 +29,11 @@ public class PlayerGroundState : PlayerState
         {
             stateMachine.ChangeState(player.jumpState);
         }
+
+        if (Input.GetKeyDown(KeyCode.LeftShift) && player.groundCheck && !player.isRoll)
+        {
+            stateMachine.ChangeState(player.rollState);
+        }
+
     }
 }

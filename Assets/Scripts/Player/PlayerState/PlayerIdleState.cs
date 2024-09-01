@@ -14,6 +14,7 @@ public class PlayerIdleState : PlayerGroundState
 
         rb.gravityScale = 4;
         player.isJump = false;
+        player.isRoll = false;
         player.SetZeroVelocity();
     }
 
