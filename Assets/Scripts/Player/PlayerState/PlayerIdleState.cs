@@ -12,7 +12,7 @@ public class PlayerIdleState : PlayerGroundState
     {
         base.Enter();
 
-        rb.gravityScale = 4;
+        rb.gravityScale = 8;
         player.isJump = false;
         player.isRoll = false;
         player.SetZeroVelocity();

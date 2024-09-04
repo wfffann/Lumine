@@ -29,12 +29,18 @@ public class Base : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.tag == "Player")
+        {
+            player = collision.GetComponent<Player>();
             canPlaceGlobalLight = true;
+        }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
         if(collision.tag == "Player")
+        {
+            player = collision.GetComponent<Player>();
             canPlaceGlobalLight = false;
+        }
     }
 }

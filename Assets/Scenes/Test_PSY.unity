@@ -133,7 +133,7 @@ GameObject:
   - component: {fileID: 429071289}
   - component: {fileID: 429071288}
   - component: {fileID: 429071290}
-  m_Layer: 10
+  m_Layer: 6
   m_Name: Ground (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -263,7 +263,7 @@ GameObject:
   - component: {fileID: 571765470}
   - component: {fileID: 571765469}
   - component: {fileID: 571765471}
-  m_Layer: 10
+  m_Layer: 6
   m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -642,6 +642,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac0b09e7857660247b1477e93731de29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &1469842290 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 196620627739074871, guid: 38b1806cd3863e0499cb8a18c43e694c, type: 3}
+  m_PrefabInstance: {fileID: 1335950048417088346}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1783247004
 GameObject:
   m_ObjectHideFlags: 0
@@ -677,8 +682,8 @@ MonoBehaviour:
   m_StreamingVersion: 20170927
   m_Priority: 10
   m_StandbyUpdate: 2
-  m_LookAt: {fileID: 0}
-  m_Follow: {fileID: 0}
+  m_LookAt: {fileID: 1469842290}
+  m_Follow: {fileID: 1469842290}
   m_Lens:
     FieldOfView: 60
     OrthographicSize: 7
@@ -766,6 +771,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8610381141374136799, guid: 38b1806cd3863e0499cb8a18c43e694c, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 6200000, guid: 0e8906c419f885e43a8aeb67fa629a54, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerJumpState : PlayerState
 {
+
     public PlayerJumpState(Player _player, PlayerStateMachine _stateMachine, string _animBoolName) : base(_player, _stateMachine, _animBoolName)
     {
     }
@@ -12,7 +13,7 @@ public class PlayerJumpState : PlayerState
     {
         base.Enter();
 
-        rb.gravityScale = 10;
+        rb.gravityScale = player.currentGravity;
         player.isJump = true;
         rb.velocity = new Vector2(rb.velocity.x, player.jumpForce);
     }
@@ -28,6 +29,12 @@ public class PlayerJumpState : PlayerState
 
         if(xInput != 0)
             rb.velocity = new Vector2(xInput * player.speed * 1.2f, rb.velocity.y);
+
+        //if (Input.GetKeyUp(KeyCode.Space))
+        //    rb.gravityScale = 8;
+
+        if (!Input.GetButton("Jump"))
+            rb.velocity += Vector2.up * Physics2D.gravity.y * (player.lowJumpMultiplier - player.currentGravity) * Time.deltaTime;
 
         if (rb.velocity.y < 0)
             stateMachine.ChangeState(player.airState);

@@ -12,15 +12,20 @@ public class Player : MonoBehaviour
 
     [Header("基本设置")]
     public float speed; //速度
+    public float currentGravity; //玩家的受到的重力
+    public float fallMultiplier; //玩家到达最高点后正常下落的下落加速度
+    public float lowJumpMultiplier; //玩家在到达最高点前提前放开跳跃时的下落加速度
     public float jumpForce; //跳跃施加力
     public float jumpTime;
+    public bool gameOver = false;
+
+    [Header("翻滚")]
     public float rollForce; //翻滚施加力
     //public float rollDeceleration; // 翻滚减速度
     public float rollFrictionCoefficient;//翻滚摩擦系数
     public float rotationSpeed;//旋转速度
     //public float rollTime;// 翻滚时间
     public float rollDistance; // 翻滚的距离
-    public bool gameOver = false;
 
     [Header("地面和墙面检测")]
     public Transform lightPos;
@@ -92,6 +97,8 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
+        stateMachine.currentState.FixedUpdate();
+
         PhysicsCheck();
     }
 
