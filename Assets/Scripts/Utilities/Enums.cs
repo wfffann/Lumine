@@ -10,3 +10,15 @@ public enum LightState
     GlobalLight,
     //待添加
 }
+
+public enum PlatformState
+{
+    noMove, //不动
+    horizontalMove, //水平运动
+    verticalMove, //竖直运动
+}
+
+public enum PlatformMoveDir
+{
+    Up, Down, Left, Right, No
+}
