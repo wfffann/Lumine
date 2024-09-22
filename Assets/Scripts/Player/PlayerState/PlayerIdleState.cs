@@ -12,9 +12,10 @@ public class PlayerIdleState : PlayerGroundState
     {
         base.Enter();
 
-        rb.gravityScale = 8;
+        rb.gravityScale = 8f;
         player.isJump = false;
         player.isRoll = false;
+
         player.SetZeroVelocity();
     }
 
@@ -36,7 +37,6 @@ public class PlayerIdleState : PlayerGroundState
             stateMachine.ChangeState(player.moveState);
 
         //if (player.isWall && !player.isGround)
-        //    stateMachine.ChangeState(player.wallSlide);
-            
+        //      stateMachine.ChangeState(player.wallSlide);     
     }
 }

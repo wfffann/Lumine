@@ -6,12 +6,16 @@ using UnityEngine.EventSystems;
 public class MovePlatform : MonoBehaviour
 {
     [Header("组件获取")]
-    public Transform upPoint, downPoint, leftPoint, rightPoint;
+    public Transform upPoint;
+    public Transform downPoint;
+    public Transform leftPoint;
+    public Transform rightPoint;
+    public Transform playerFather;
 
     [Header("平台设置")]
     public PlatformState currentState;
-    public float xSpeed;
-    public float ySpeed;
+    public float speed;
+    public Vector2 currentSpeed;
     public float waitTime;
     public PlatformMoveDir currentDir;
     public float waitTimer;
@@ -35,7 +39,7 @@ public class MovePlatform : MonoBehaviour
         }
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         if (currentState == PlatformState.noMove)
             return;
@@ -44,6 +48,9 @@ public class MovePlatform : MonoBehaviour
         Move();
     }
 
+    /// <summary>
+    /// 检查平台目前状态
+    /// </summary>
     private void CheckMoveDir()
     {
         if (isWaiting)
@@ -100,24 +107,61 @@ public class MovePlatform : MonoBehaviour
         #endregion
     }
 
+    /// <summary>
+    /// 移动
+    /// </summary>
     private void Move()
     {
         switch (currentDir)
         {
             case PlatformMoveDir.Up:
-                transform.Translate(new Vector2(0, ySpeed) * Time.deltaTime);
+                transform.Translate(new Vector2(0, speed) * Time.deltaTime);
+                currentSpeed.y = speed;
                 break;
             case PlatformMoveDir.Down:
-                transform.Translate(new Vector2(0, -ySpeed) * Time.deltaTime);
+                transform.Translate(new Vector2(0, -speed) * Time.deltaTime);
+                currentSpeed.y = -speed;
                 break;
             case PlatformMoveDir.Left:
-                transform.Translate(new Vector2(-xSpeed, 0) * Time.deltaTime);
+                transform.Translate(new Vector2(-speed, 0) * Time.deltaTime);
+                currentSpeed.x = -speed;
                 break;
             case PlatformMoveDir.Right:
-                transform.Translate(new Vector2(xSpeed, 0) * Time.deltaTime);
+                transform.Translate(new Vector2(speed, 0) * Time.deltaTime);
+                currentSpeed.x = speed;
                 break;
             case PlatformMoveDir.No:
+                currentSpeed = Vector2.zero;
                 break;
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            //if (collision.gameObject.GetComponent<Player>().platformSpeed != currentSpeed)
+            //{
+            //    collision.gameObject.GetComponent<Player>().platformSpeed = currentSpeed;
+            //    collision.gameObject.GetComponent<Player>().SetZeroVelocity();
+            //}
+
+            playerFather = collision.gameObject.transform.parent;
+            if(collision.gameObject.GetComponent<Player>().rb.velocity.x != 0)
+                collision.gameObject.transform.SetParent(null);
+            else
+                collision.gameObject.transform.SetParent(transform);
+
+
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            //collision.gameObject.GetComponent<Player>().platformSpeed = Vector2.zero;
+            //collision.gameObject.GetComponent<Player>().plusPlatformSpeed = false;
         }
     }
 }

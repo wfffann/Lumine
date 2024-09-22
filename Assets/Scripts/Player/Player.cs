@@ -27,6 +27,10 @@ public class Player : MonoBehaviour
     //public float rollTime;// 翻滚时间
     public float rollDistance; // 翻滚的距离
 
+    [Header("特殊平台设置")]
+    public Vector2 platformSpeed;
+    public bool plusPlatformSpeed = false;
+
     [Header("地面和墙面检测")]
     public Transform lightPos;
     public Transform groundCheck;
@@ -136,7 +140,7 @@ public class Player : MonoBehaviour
         if (isKnocked)
             return;
 
-        rb.velocity = new Vector2(0, 0);
+        rb.velocity = new Vector2(0, 0) + new Vector2(platformSpeed.x, 0);
     }
 
     /// <summary>
@@ -146,7 +150,8 @@ public class Player : MonoBehaviour
     /// <param name="_yVelocity"></param>
     public void SetVelocity(float _xVelocity, float _yVelocity)
     {
-        rb.velocity = new Vector2(_xVelocity, _yVelocity);
+        rb.velocity = new Vector2(_xVelocity, _yVelocity)+ new Vector2(platformSpeed.x, 0);
+
         FlipController(_xVelocity);
     }
     #endregion

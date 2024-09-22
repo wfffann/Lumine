@@ -15,7 +15,7 @@ public class PlayerJumpState : PlayerState
 
         rb.gravityScale = player.currentGravity;
         player.isJump = true;
-        rb.velocity = new Vector2(rb.velocity.x, player.jumpForce);
+        rb.AddForce(new Vector2(0, player.jumpForce), ForceMode2D.Impulse);
     }
 
     public override void Exit()
@@ -26,9 +26,6 @@ public class PlayerJumpState : PlayerState
     public override void Update()
     {
         base.Update();
-
-        if(xInput != 0)
-            rb.velocity = new Vector2(xInput * player.speed * 1.2f, rb.velocity.y);
 
         //if (Input.GetKeyUp(KeyCode.Space))
         //    rb.gravityScale = 8;
@@ -41,5 +38,13 @@ public class PlayerJumpState : PlayerState
 
         if (player.isJump && player.canGrab && player.isWall && !player.isGround)
             stateMachine.ChangeState(player.grabState);
+    }
+
+    public override void FixedUpdate()
+    {
+        base.FixedUpdate();
+
+        if (xInput != 0)
+            rb.velocity = new Vector2(xInput * player.speed * 1.2f, rb.velocity.y);
     }
 }

@@ -12,7 +12,7 @@ public class PlayerClimbState : PlayerState
     {
         base.Enter();
 
-        rb.AddForce(new Vector2(0, 5f), ForceMode2D.Impulse);
+        rb.AddForce(new Vector2(0, 10f), ForceMode2D.Impulse);
         player.isGrab = true;
     }
 
@@ -27,7 +27,7 @@ public class PlayerClimbState : PlayerState
 
         if (!player.isWall && player.isGrab)
         {
-            rb.gravityScale = 40;
+            rb.gravityScale = 50;
             player.isGrab = false;
             rb.AddForce(new Vector2(3f * player.facingDir, 0f), ForceMode2D.Impulse);
         }

@@ -34,6 +34,5 @@ public class PlayerGroundState : PlayerState
         {
             stateMachine.ChangeState(player.rollState);
         }
-
     }
 }
